@@ -1,6 +1,6 @@
 {
   "name": "@adobe/reactor-uploader",
-  "version": "1.0.0-alpha.4",
+  "version": "1.0.0-alpha.5",
   "description": "Command line tool for uploading Launch extensions.",
   "author": {
     "name": "Adobe Systems",
