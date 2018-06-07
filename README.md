@@ -18,9 +18,9 @@ npm -v
 
 You will also need to have already created a zip file containing your extension package. The [@adobe/reactor-packager](https://www.npmjs.com/package/@adobe/reactor-packager) tool can be used to create such a zip file.
 
-Finally, you will need to be authorized to upload extensions to Launch. Typically, this is done by first creating an integration through Adobe I/O. Please see the [Getting Started guide](https://developer.adobelaunch.com/guides/extensions/getting-started/) for detailed steps on creating an integration and getting it assigned extension management rights. Once an integration has been created, the uploader tool will ask you to provide details about the integration.
+Finally, you will need to be authorized to upload extensions to Launch. Typically, this is done by first creating an integration through Adobe I/O. Please see the [Getting Started guide](https://developer.adobelaunch.com/guides/extensions/getting-started/) for detailed steps on creating an integration and procuring extension management rights.
 
-If the user account you use to log into Launch has been given extension management rights, you can instead provide an access token directly instead of providing integration details. To get the access token:
+If the user account you use to log into Launch has been given extension management rights, you can choose to instead provide an access token directly instead of dealing with Adobe I/O integration details. To get the access token for your user:
 
 1. Log into Launch.
 2. Open up the browser's developer tools console.
