@@ -18,15 +18,15 @@ npm -v
 
 You will also need to have already created a zip file containing your extension package. The [@adobe/reactor-packager](https://www.npmjs.com/package/@adobe/reactor-packager) tool can be used to create such a zip file.
 
-Finally, you will need to be authorized to upload extensions to Launch. Typically, this is done by first creating an integration through Adobe I/O. Please see the [Getting Started guide](https://developer.adobelaunch.com/guides/extensions/getting-started/) for detailed steps on creating an integration and getting it properly authorized. Once an integration has been created, the uploader tool will ask you to provide details about the integration in order to properly authenticate.
+Finally, you will need to be authorized to upload extensions to Launch. Typically, this is done by first creating an integration through Adobe I/O. Please see the [Getting Started guide](https://developer.adobelaunch.com/guides/extensions/getting-started/) for detailed steps on creating an integration and getting it assigned extension management rights. Once an integration has been created, the uploader tool will ask you to provide details about the integration.
 
-If the user account you use to log into Launch has been given extension upload rights, you can instead provide an access token directly instead of providing integration details. To get the access token:
+If the user account you use to log into Launch has been given extension management rights, you can instead provide an access token directly instead of providing integration details. To get the access token:
 
 1. Log into Launch.
 2. Open up the browser's developer tools console.
 3. Type `userData.imsAccessToken`, hit enter, and then copy the emitted value. In most modern browsers, you can instead type `copy(userData.imsAccessToken)` and hit enter and it will automatically copy the value to your clipboard.
 
-Once your zip file is ready to upload and you've been authorized to upload extension packages, you can use the uploader tool in either a question-answer format or by passing information in through command line arguments.
+Once your zip file is ready to upload and you've been granted extension management rights, you can use the uploader tool in either a question-answer format or by passing information through command line arguments.
 
 ### Question-Answer Format
 
