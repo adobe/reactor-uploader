@@ -7,6 +7,10 @@
     "url": "http://adobe.com",
     "email": "reactor@adobe.com"
   },
+  "license": {
+    "type": "Apache-2.0",
+    "url": "https://opensource.org/licenses/apache2.0.php"
+  },
   "repository": {
     "type": "git",
     "url": "git@github.com:Adobe-Marketing-Cloud/reactor-uploader.git"
