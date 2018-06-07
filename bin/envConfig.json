@@ -13,13 +13,13 @@
   },
   "integration": {
     "jwt": "https://ims-na1.adobelogin.com/ims/exchange/jwt",
-    "aud": "https://ims-na1.adobelogin.com.com/c/",
+    "aud": "https://ims-na1.adobelogin.com/c/",
     "metascope": "https://ims-na1.adobelogin.com/s/ent_reactor_admin_sdk",
     "extensionPackages": "https://mc-api-activation-reactor-integration.adobe.io/extension_packages"
   },
   "prod": {
     "jwt": "https://ims-na1.adobelogin.com/ims/exchange/jwt",
-    "aud": "https://ims-na1.adobelogin.com.com/c/",
+    "aud": "https://ims-na1.adobelogin.com/c/",
     "metascope": "https://ims-na1.adobelogin.com/s/ent_reactor_admin_sdk",
     "extensionPackages": "https://mc-api-activation-reactor.adobe.io/extension_packages"
   }
