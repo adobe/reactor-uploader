@@ -1,0 +1,32 @@
+{
+  "name": "@adobe/reactor-uploader",
+  "version": "1.0.0-alpha.1",
+  "description": "Command line tool for uploading Launch extensions.",
+  "author": {
+    "name": "Adobe Systems",
+    "url": "http://adobe.com",
+    "email": "reactor@adobe.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:Adobe-Marketing-Cloud/reactor-uploader.git"
+  },
+  "keywords": [
+    "launch",
+    "extension"
+  ],
+  "bin": {
+    "reactor-uploader": "./bin/index.js"
+  },
+  "dependencies": {
+    "chalk": "^2.4.1",
+    "delay": "^3.0.0",
+    "inquirer": "^5.2.0",
+    "jwt-simple": "^0.5.1",
+    "ora": "^2.1.0",
+    "request": "^2.87.0",
+    "request-promise-native": "^1.0.5",
+    "yargs": "^11.0.0",
+    "yauzl": "^2.9.1"
+  }
+}
