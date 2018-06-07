@@ -18,7 +18,7 @@ npm -v
 
 You will also need to have already created a zip file containing your extension package. The [@adobe/reactor-packager](https://www.npmjs.com/package/@adobe/reactor-packager) tool can be used to create such a zip file.
 
-Finally, you will need to be authorized to upload extensions to Launch. Typically, this is done by creating an integration through Adobe I/O. Please see the [Getting Started guide](https://developer.adobelaunch.com/guides/extensions/getting-started/) for detailed steps on creating an integration. Once an integration has been created, the uploader tool will ask you to provide details about the integration in order to properly authenticate.
+Finally, you will need to be authorized to upload extensions to Launch. Typically, this is done by first creating an integration through Adobe I/O. Please see the [Getting Started guide](https://developer.adobelaunch.com/guides/extensions/getting-started/) for detailed steps on creating an integration and getting it properly authorized. Once an integration has been created, the uploader tool will ask you to provide details about the integration in order to properly authenticate.
 
 If the user account you use to log into Launch has been given extension upload rights, you can instead provide an access token directly instead of providing integration details. To get the access token:
 
@@ -54,27 +54,27 @@ The named arguments are as follows:
 
 The environment to which the extension package should be uploaded. Valid options are `dev`, `qe`, `integration`, and `prod`. At this point in time, users outside of Adobe will only use `integration`.
 
-##### --private-key (for integration-based authorization)
+##### --private-key (for authentication using an Adobe I/O integration)
 
 The local path (relative or absolute) to the RSA private key. Instructions on how to generate this key can be found in the [Getting Started guide](https://developer.adobelaunch.com/guides/extensions/getting-started/) and should have been used when creating your integration through the Adobe I/O console. Optionally, rather than passing the private key path as a command line argument, it can instead be provided by setting an environment variable named `REACTOR_UPLOADER_PRIVATE_KEY`. 
 
-##### --org-id (for integration-based authorization)
+##### --org-id (for authentication using an Adobe I/O integration)
 
 Your organization ID. You can find this on the overview screen for the integration you have created within the [Adobe I/O console](https://console.adobe.io).
 
-##### --tech-account-id (for integration-based authorization)
+##### --tech-account-id (for authentication using an Adobe I/O integration)
 
 Your technical account ID. You can find this on the overview screen for the integration you have created within the [Adobe I/O console](https://console.adobe.io).
 
-##### --api-key (for integration-based authorization)
+##### --api-key (for authentication using an Adobe I/O integration)
 
 Your API key. You can find this on the overview screen for the integration you have created within the [Adobe I/O console](https://console.adobe.io).
 
-##### --client-secret (for integration-based authorization)
+##### --client-secret (for authentication using an Adobe I/O integration)
 
 Your client secret. You can find this on the overview screen for the integration you have created within the [Adobe I/O console](https://console.adobe.io). Optionally, rather than passing the client secret as a command line argument, it can instead be provided by setting an environment variable named `REACTOR_UPLOADER_CLIENT_SECRET`.
 
-##### --access-token (for access-token-based authorization)
+##### --access-token (for authentication using an access token)
 
 A valid access token.
 
