@@ -37,20 +37,16 @@ const uploadZip = require('./uploadZip');
 const monitorStatus = require('./monitorStatus');
 const envConfig = require('./envConfig');
 
-const go = async () => {
-  const environment = await getEnvironment(argv);
-  const envSpecificConfig = envConfig[environment];
-  const accessToken = await getAccessToken(envSpecificConfig, argv);
-  const zipPath = await getZipPath(argv);
-  const extensionName = await getExtensionName(zipPath);
-  let extensionPackageId = await getExtensionPackageId(envSpecificConfig, accessToken, extensionName);
-  extensionPackageId = await uploadZip(envSpecificConfig, accessToken, extensionPackageId, zipPath);
-  await monitorStatus(envSpecificConfig, accessToken, extensionPackageId);
-};
-
 (async () => {
   try {
-    await go();
+    const environment = await getEnvironment(argv);
+    const envSpecificConfig = envConfig[environment];
+    const accessToken = await getAccessToken(envSpecificConfig, argv);
+    const zipPath = await getZipPath(argv);
+    const extensionName = await getExtensionName(zipPath);
+    let extensionPackageId = await getExtensionPackageId(envSpecificConfig, accessToken, extensionName);
+    extensionPackageId = await uploadZip(envSpecificConfig, accessToken, extensionPackageId, zipPath);
+    await monitorStatus(envSpecificConfig, accessToken, extensionPackageId);
   } catch (error) {
     console.log(chalk.bold.red(error.message));
     process.exitCode = 1;

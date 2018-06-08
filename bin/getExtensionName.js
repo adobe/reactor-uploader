@@ -13,10 +13,11 @@
 const yauzl = require('yauzl');
 
 module.exports = (zipPath) => {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     yauzl.open(zipPath, {lazyEntries: true }, (error, zipFile) => {
       if (error) {
-        throw new Error(`Error inspecting zip file for extension info. ${error}`);
+        reject(new Error(`Error inspecting zip file for extension info. ${error}`));
+        return;
       }
 
       zipFile.readEntry();
@@ -29,14 +30,18 @@ module.exports = (zipPath) => {
             readStream.on('end', () => {
               const manifest = JSON.parse(Buffer.concat(chunks).toString());
               resolve(manifest.name);
+              zipFile.close();
             });
           });
         } else {
           zipFile.readEntry();
         }
       });
+      zipFile.on('end', () => {
+        reject(new Error('No extension.json found in within the extension package zip file.'));
+      });
       zipFile.on('error', (error) => {
-        throw new Error(`Error inspecting zip file for extension info. ${error}`);
+        reject(new Error(`Error inspecting zip file for extension info. ${error}`));
       });
     });
   })

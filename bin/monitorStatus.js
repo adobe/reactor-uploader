@@ -21,7 +21,7 @@ const MAX_RETRIES = 50;
 
 const requestStatus = async (envConfig, accessToken, extensionPackageId, spinner, retries = 0) => {
   if (retries >= MAX_RETRIES) {
-    throw new Error('The extension package failed to be processed within an expected timeframe.');
+    throw new Error('The extension package failed to be processed within the expected timeframe.');
   }
 
   const options = {
