@@ -14,7 +14,6 @@
 
 const argv = require('yargs')
   .usage('Usage: $0 <zipPath> [options]')
-  .env('REACTOR_UPLOADER')
   .command('zipPath', 'The local path to the extension package zip file you wish to upload.')
   .describe('env', 'The environment to which the extension packaqe should be uploaded.')
   .choices('env', ['dev', 'qe', 'integration', 'prod'])

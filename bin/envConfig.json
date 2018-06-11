@@ -3,24 +3,32 @@
     "jwt": "https://ims-na1-stg1.adobelogin.com/ims/exchange/jwt",
     "aud": "https://ims-na1-stg1.adobelogin.com/c/",
     "metascope": "https://ims-na1-stg1.adobelogin.com/s/ent_reactor_admin_sdk",
-    "extensionPackages": "https://mc-api-activation-reactor-dev.adobe.io/extension_packages"
+    "extensionPackages": "https://mc-api-activation-reactor-dev.adobe.io/extension_packages",
+    "privateKeyEnvVar": "REACTOR_UPLOADER_PRIVATE_KEY_DEV",
+    "clientSecretEnvVar": "REACTOR_UPLOADER_CLIENT_SECRET_DEV"
   },
   "qe": {
     "jwt": "https://ims-na1-stg1.adobelogin.com/ims/exchange/jwt",
     "aud": "https://ims-na1-stg1.adobelogin.com/c/",
     "metascope": "https://ims-na1-stg1.adobelogin.com/s/ent_reactor_admin_sdk",
-    "extensionPackages": "https://mc-api-activation-reactor-qe.adobe.io/extension_packages"
+    "extensionPackages": "https://mc-api-activation-reactor-qe.adobe.io/extension_packages",
+    "privateKeyEnvVar": "REACTOR_UPLOADER_PRIVATE_KEY_QE",
+    "clientSecretEnvVar": "REACTOR_UPLOADER_CLIENT_SECRET_QE"
   },
   "integration": {
     "jwt": "https://ims-na1.adobelogin.com/ims/exchange/jwt",
     "aud": "https://ims-na1.adobelogin.com/c/",
     "metascope": "https://ims-na1.adobelogin.com/s/ent_reactor_admin_sdk",
-    "extensionPackages": "https://mc-api-activation-reactor-integration.adobe.io/extension_packages"
+    "extensionPackages": "https://mc-api-activation-reactor-integration.adobe.io/extension_packages",
+    "privateKeyEnvVar": "REACTOR_UPLOADER_PRIVATE_KEY_INTEGRATION",
+    "clientSecretEnvVar": "REACTOR_UPLOADER_CLIENT_SECRET_INTEGRATION"
   },
   "prod": {
     "jwt": "https://ims-na1.adobelogin.com/ims/exchange/jwt",
     "aud": "https://ims-na1.adobelogin.com/c/",
     "metascope": "https://ims-na1.adobelogin.com/s/ent_reactor_admin_sdk",
-    "extensionPackages": "https://mc-api-activation-reactor.adobe.io/extension_packages"
+    "extensionPackages": "https://mc-api-activation-reactor.adobe.io/extension_packages",
+    "privateKeyEnvVar": "REACTOR_UPLOADER_PRIVATE_KEY_PROD",
+    "clientSecretEnvVar": "REACTOR_UPLOADER_CLIENT_SECRET_PROD"
   }
 }

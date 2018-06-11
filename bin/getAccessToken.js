@@ -25,6 +25,9 @@ const getIntegrationAccessToken = async (
     clientSecret
   }
 ) => {
+  privateKey = privateKey || process.env[envConfig.privateKeyEnvVar];
+  clientSecret = clientSecret || process.env[envConfig.clientSecretEnvVar];
+
   if (!privateKey) {
     ({ privateKey } = await inquirer.prompt([
       {

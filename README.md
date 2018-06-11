@@ -40,15 +40,15 @@ The uploader tool will ask for any information necessary to upload the zip file.
 
 ### Command Line Arguments
 
-To skip any of the questions the uploader would typically ask, you can pass the respective information through command line arguments. An example is as follows:
+To skip any of the questions the uploader would typically ask, you can pass the respective information as command line arguments. An example is as follows:
 
 ```
 npx @adobe/reactor-uploader package-myextension-1.0.0.zip --env=integration --private-key=/Users/jane/launchkeys/reactor_integration_private.key --org-id=01C20D883A7D42080A494212@AdobeOrg --tech-account-id=14A533A72B181CF90A44410D@techacct.adobe.com --api-key=192ce541b1144160941a83vb74e0e74d --client-secret=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 ```
 
-The first positional argument (`package-myextension-1.0.0.zip` in the example) is the path (relative or absolute) to the zip file you wish to upload.
+The first positional parameter is the path (relative or absolute) to the zip file you wish to upload. In the example, `package-myextension-1.0.0.zip` is passed as an argument for this parameter.
 
-The named arguments are as follows:
+The named parameters are as follows:
 
 ##### --env
 
@@ -56,7 +56,14 @@ The environment to which the extension package should be uploaded. Valid options
 
 ##### --private-key (for authentication using an Adobe I/O integration)
 
-The local path (relative or absolute) to the RSA private key. Instructions on how to generate this key can be found in the [Getting Started guide](https://developer.adobelaunch.com/guides/extensions/getting-started/) and should have been used when creating your integration through the Adobe I/O console. Optionally, rather than passing the private key path as a command line argument, it can instead be provided by setting an environment variable named `REACTOR_UPLOADER_PRIVATE_KEY`. 
+The local path (relative or absolute) to the RSA private key. Instructions on how to generate this key can be found in the [Getting Started guide](https://developer.adobelaunch.com/guides/extensions/getting-started/) and should have been used when creating your integration through the Adobe I/O console.
+
+Optionally, rather than passing the private key path as a command line argument, it can instead be provided by setting an environment variable. The environment variable should be named one of the following, depending on which Launch environment will be receiving the extension package:
+
+* `REACTOR_UPLOADER_PRIVATE_KEY_DEV` 
+* `REACTOR_UPLOADER_PRIVATE_KEY_QE` 
+* `REACTOR_UPLOADER_PRIVATE_KEY_INTEGRATION` 
+* `REACTOR_UPLOADER_PRIVATE_KEY_PROD`
 
 ##### --org-id (for authentication using an Adobe I/O integration)
 
@@ -72,7 +79,14 @@ Your API key. You can find this on the overview screen for the integration you h
 
 ##### --client-secret (for authentication using an Adobe I/O integration)
 
-Your client secret. You can find this on the overview screen for the integration you have created within the [Adobe I/O console](https://console.adobe.io). Optionally, rather than passing the client secret as a command line argument, it can instead be provided by setting an environment variable named `REACTOR_UPLOADER_CLIENT_SECRET`.
+Your client secret. You can find this on the overview screen for the integration you have created within the [Adobe I/O console](https://console.adobe.io).
+
+Optionally, rather than passing the client secret as a command line argument, it can instead be provided by setting an environment variable. The environment variable should be named one of the following, depending on which Launch environment will be receiving the extension package:
+ 
+* `REACTOR_UPLOADER_CLIENT_SECRET_DEV`
+* `REACTOR_UPLOADER_CLIENT_SECRET_QE`
+* `REACTOR_UPLOADER_CLIENT_SECRET_INTEGRATION`
+* `REACTOR_UPLOADER_CLIENT_SECRET_PROD`
 
 ##### --access-token (for authentication using an access token)
 
