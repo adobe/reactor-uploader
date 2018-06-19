@@ -25,7 +25,5 @@ module.exports = (error, messagePrefix) => {
     }
   }
 
-  messagePrefix = messagePrefix ? messagePrefix + ' ' : '';
-
-  throw new Error(messagePrefix + message);
+  throw new Error(messagePrefix + ' ' + message);
 };

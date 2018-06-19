@@ -14,7 +14,7 @@ const yauzl = require('yauzl');
 
 module.exports = (zipPath) => {
   return new Promise((resolve, reject) => {
-    yauzl.open(zipPath, {lazyEntries: true }, (error, zipFile) => {
+    yauzl.open(zipPath, { lazyEntries: true }, (error, zipFile) => {
       if (error) {
         reject(new Error(`Error inspecting zip file for extension info. ${error}`));
         return;

@@ -15,10 +15,10 @@ const chalk = require('chalk');
 const getReactorHeaders = require('./getReactorHeaders');
 const handleResponseError = require('./handleResponseError');
 
-module.exports = async (envConfig, accessToken, extensionName) => {
+module.exports = async (envConfig, accessToken, extensionPackageName) => {
   const options = {
     method: 'GET',
-    url: `${envConfig.extensionPackages}?page[size]=1&page[number]=1&filter[name]=EQ ${extensionName}`,
+    url: `${envConfig.extensionPackages}?page[size]=1&page[number]=1&filter[name]=EQ ${extensionPackageName}`,
     headers: getReactorHeaders(accessToken),
     transform: JSON.parse
   };
@@ -35,12 +35,12 @@ module.exports = async (envConfig, accessToken, extensionName) => {
 
   if (body.data.length) {
     extensionPackageId = body.data[0].id;
-    console.log(`An existing extension package with the name ${chalk.bold(extensionName)} was ` +
+    console.log(`An existing extension package with the name ${chalk.bold(extensionPackageName)} was ` +
       `found on the server and will be updated. The extension package ID ` +
       `is ${chalk.bold(extensionPackageId)}.`);
   } else {
     console.log(`No extension package was found on the server with the ` +
-      `name ${chalk.bold(extensionName)}. A new extension package will be created.`);
+      `name ${chalk.bold(extensionPackageName)}. A new extension package will be created.`);
   }
 
   return extensionPackageId;

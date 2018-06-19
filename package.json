@@ -19,6 +19,10 @@
   "bin": {
     "reactor-uploader": "./bin/index.js"
   },
+  "scripts": {
+    "test": "jasmine JASMINE_CONFIG_PATH=jasmine.json",
+    "test:watch": "nodemon --exec jasmine JASMINE_CONFIG_PATH=jasmine.json"
+  },
   "dependencies": {
     "chalk": "^2.4.1",
     "delay": "^3.0.0",
@@ -29,5 +33,11 @@
     "request-promise-native": "^1.0.5",
     "yargs": "^11.0.0",
     "yauzl": "^2.9.1"
+  },
+  "devDependencies": {
+    "jasmine": "^3.1.0",
+    "jasmine-expect": "^3.8.3",
+    "nodemon": "^1.17.5",
+    "proxyquire": "^2.0.1"
   }
 }

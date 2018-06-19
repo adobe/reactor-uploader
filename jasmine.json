@@ -1,0 +1,12 @@
+{
+  "spec_dir": "bin",
+  "spec_files": [
+    "**/__tests__/*.test.js"
+  ],
+  "helpers": [
+    "**/__tests__/**/helpers/**/*.js",
+    "../node_modules/jasmine-expect/index.js"
+  ],
+  "stopSpecOnExpectationFailure": false,
+  "random": true
+}
