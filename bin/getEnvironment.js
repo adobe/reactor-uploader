@@ -13,18 +13,18 @@
 const inquirer = require('inquirer');
 
 module.exports = async (argv) => {
-  if (argv.env) {
-    return argv.env;
+  if (argv.environment) {
+    return argv.environment;
   } else {
-    const { env } = await inquirer.prompt([
+    const { environment } = await inquirer.prompt([
       {
         type: 'list',
-        name: 'env',
+        name: 'environment',
         message: 'To which environment would you like to upload your extension package?',
         choices: [
           {
-            name: 'Dev (Adobe Internal Use Only)',
-            value: 'dev'
+            name: 'Development (Adobe Internal Use Only)',
+            value: 'development'
           },
           {
             name: 'QE (Adobe Internal Use Only)',
@@ -36,13 +36,13 @@ module.exports = async (argv) => {
           },
           {
             name: 'Production (Adobe Internal Use Only',
-            value: 'prod'
+            value: 'production'
           }
         ],
         default: 2
       }
     ]);
 
-    return env;
+    return environment;
   }
 };

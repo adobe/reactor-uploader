@@ -43,16 +43,16 @@ The uploader tool will ask for any information necessary to upload the zip file.
 To skip any of the questions the uploader would typically ask, you can pass the respective information as command line arguments. An example is as follows:
 
 ```
-npx @adobe/reactor-uploader package-myextension-1.0.0.zip --env=integration --private-key=/Users/jane/launchkeys/reactor_integration_private.key --org-id=01C20D883A7D42080A494212@AdobeOrg --tech-account-id=14A533A72B181CF90A44410D@techacct.adobe.com --api-key=192ce541b1144160941a83vb74e0e74d --client-secret=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+npx @adobe/reactor-uploader package-myextension-1.0.0.zip --environment=integration --private-key=/Users/jane/launchkeys/reactor_integration_private.key --org-id=01C20D883A7D42080A494212@AdobeOrg --tech-account-id=14A533A72B181CF90A44410D@techacct.adobe.com --api-key=192ce541b1144160941a83vb74e0e74d --client-secret=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 ```
 
 The first positional parameter is the path (relative or absolute) to the zip file you wish to upload. In the example, `package-myextension-1.0.0.zip` is passed as an argument for this parameter.
 
 The named parameters are as follows:
 
-##### --env
+##### --environment
 
-The environment to which the extension package should be uploaded. Valid options are `dev`, `qe`, `integration`, and `prod`. At this point in time, users outside of Adobe will only use `integration`.
+The environment to which the extension package should be uploaded. Valid options are `development`, `qe`, `integration`, and `production`. At this point in time, users outside of Adobe will only use `integration`.
 
 ##### --private-key (for authentication using an Adobe I/O integration)
 
@@ -60,10 +60,10 @@ The local path (relative or absolute) to the RSA private key. Instructions on ho
 
 Optionally, rather than passing the private key path as a command line argument, it can instead be provided by setting an environment variable. The environment variable should be named one of the following, depending on which Launch environment will be receiving the extension package:
 
-* `REACTOR_UPLOADER_PRIVATE_KEY_DEV` 
+* `REACTOR_UPLOADER_PRIVATE_KEY_DEVELOPMENT` 
 * `REACTOR_UPLOADER_PRIVATE_KEY_QE` 
 * `REACTOR_UPLOADER_PRIVATE_KEY_INTEGRATION` 
-* `REACTOR_UPLOADER_PRIVATE_KEY_PROD`
+* `REACTOR_UPLOADER_PRIVATE_KEY_PRODUCTION`
 
 ##### --org-id (for authentication using an Adobe I/O integration)
 
@@ -83,10 +83,10 @@ Your client secret. You can find this on the overview screen for the integration
 
 Optionally, rather than passing the client secret as a command line argument, it can instead be provided by setting an environment variable. The environment variable should be named one of the following, depending on which Launch environment will be receiving the extension package:
  
-* `REACTOR_UPLOADER_CLIENT_SECRET_DEV`
+* `REACTOR_UPLOADER_CLIENT_SECRET_DEVELOPMENT`
 * `REACTOR_UPLOADER_CLIENT_SECRET_QE`
 * `REACTOR_UPLOADER_CLIENT_SECRET_INTEGRATION`
-* `REACTOR_UPLOADER_CLIENT_SECRET_PROD`
+* `REACTOR_UPLOADER_CLIENT_SECRET_PRODUCTION`
 
 ##### --access-token (for authentication using an access token)
 

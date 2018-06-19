@@ -25,25 +25,25 @@ describe('getEnvironment', () => {
 
   it('returns environment argument', async () => {
     const result = await getEnvironment({
-      env: 'qe'
+      environment: 'qe'
     });
 
     expect(result).toBe('qe');
   });
 
   it('prompts for environment', async () => {
-    mockInquirer.prompt = jasmine.createSpy().and.returnValue({ env: 'qe' });
+    mockInquirer.prompt = jasmine.createSpy().and.returnValue({ environment: 'qe' });
     const result = await getEnvironment({});
 
     expect(mockInquirer.prompt).toHaveBeenCalledWith([
       {
         type: 'list',
-        name: 'env',
+        name: 'environment',
         message: jasmine.any(String),
         choices: [
           {
             name: jasmine.any(String),
-            value: 'dev'
+            value: 'development'
           },
           {
             name: jasmine.any(String),
@@ -55,7 +55,7 @@ describe('getEnvironment', () => {
           },
           {
             name: jasmine.any(String),
-            value: 'prod'
+            value: 'production'
           }
         ],
         default: 2
