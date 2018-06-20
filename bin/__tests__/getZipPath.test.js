@@ -101,7 +101,8 @@ describe('getZipPath', () => {
           'package-coinhive-1.0.0.zip',
           'customFileName.zip',
           new inquirer.Separator(),
-          'None of the above'
+          'None of the files listed',
+          new inquirer.Separator()
         ]
       }
     ]);

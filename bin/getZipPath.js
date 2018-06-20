@@ -70,7 +70,7 @@ const proposeSingleZip = async (candidateZip) => {
 };
 
 const proposeMultipleZips = async (zipsInDir) => {
-  const NONE_OPTION = 'None of the above';
+  const NONE_OPTION = 'None of the files listed';
   const { zipPath } = await inquirer.prompt([
     {
       type: 'list',
@@ -78,7 +78,8 @@ const proposeMultipleZips = async (zipsInDir) => {
       message: 'Which of the following zip files would you like to upload?',
       choices: zipsInDir.concat([
         new inquirer.Separator(),
-        NONE_OPTION
+        NONE_OPTION,
+        new inquirer.Separator()
       ])
     }
   ]);
