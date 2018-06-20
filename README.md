@@ -116,6 +116,16 @@ npx @adobe/reactor-uploader
 
 Npx will execute the uploader tool using your locally linked code rather than the code published on the public npm repository.
 
+### Scripts
+
+To run tests a single time, run the following command:
+
+`npm run test`
+
+To run tests continually while developing, run the following command:
+
+`npm run test:watch`
+
 ## Licensing
 
 This project is licensed under the Apache V2 License. See [LICENSE](LICENSE) for more information.
