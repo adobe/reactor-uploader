@@ -38,7 +38,7 @@ module.exports = (zipPath) => {
         }
       });
       zipFile.on('end', () => {
-        reject(new Error('No extension.json found in within the extension package zip file.'));
+        reject(new Error('No extension.json found within the extension package zip file.'));
       });
       zipFile.on('error', (error) => {
         reject(new Error(`Error inspecting zip file for extension info. ${error}`));

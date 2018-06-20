@@ -40,6 +40,6 @@ describe('getExtensionPackageName', () => {
       errorMessage = error.message;
     }
 
-    expect(errorMessage).toBe('No extension.json found in within the extension package zip file.');
+    expect(errorMessage).toBe('No extension.json found within the extension package zip file.');
   });
 });
