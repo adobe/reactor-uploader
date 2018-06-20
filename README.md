@@ -1,5 +1,6 @@
 # Launch Extension Uploader Tool
 
+[![Build Status](https://travis-ci.org/Adobe-Marketing-Cloud/reactor-uploader.svg?branch=master)](https://travis-ci.org/Adobe-Marketing-Cloud/reactor-uploader)
 [![npm (scoped)](https://img.shields.io/npm/v/@adobe/reactor-uploader.svg?style=flat)](https://www.npmjs.com/package/@adobe/reactor-uploader)
 
 Launch, by Adobe, is a next-generation tag management solution enabling simplified deployment of marketing technologies. For more information regarding Launch, please visit our [product website](http://www.adobe.com/enterprise/cloud-platform/launch.html).
