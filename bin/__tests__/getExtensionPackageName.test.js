@@ -15,8 +15,8 @@ const getExtensionPackageName = require('../getExtensionPackageName');
 
 describe('getExtensionPackageName', () => {
   it('returns name for valid extension package zip', async () => {
-    const result = await getExtensionPackageName(path.join(__dirname, 'singleZip', 'coinhive.zip'));
-    expect(result).toBe('coinhive');
+    const result = await getExtensionPackageName(path.join(__dirname, 'singleZip', 'helloWorld.zip'));
+    expect(result).toBe('hello-world');
   });
 
   it('throws error for corrupt extension package zip', async () => {

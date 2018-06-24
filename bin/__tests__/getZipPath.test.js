@@ -14,7 +14,7 @@ const path = require('path');
 const inquirer = require('inquirer');
 const proxyquire = require('proxyquire');
 
-const fileFromSingleZipDir = path.join(__dirname, 'singleZip', 'coinhive.zip');
+const fileFromSingleZipDir = path.join(__dirname, 'singleZip', 'helloWorld.zip');
 const fileFromMultipleZipsDir = path.join(__dirname, 'multipleZips', 'customFileName.zip');
 
 describe('getZipPath', () => {
@@ -98,7 +98,7 @@ describe('getZipPath', () => {
         name: 'zipPath',
         message: jasmine.any(String),
         choices: [
-          'package-coinhive-1.0.0.zip',
+          'package-hello-world-1.0.0.zip',
           'customFileName.zip',
           new inquirer.Separator(),
           'None of the files listed',
