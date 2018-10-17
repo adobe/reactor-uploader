@@ -16,14 +16,30 @@ const request = require('request-promise-native');
 const getReactorHeaders = require('./getReactorHeaders');
 const handleResponseError = require('./handleResponseError');
 
-module.exports = async (envConfig, accessToken, extensionPackageId, zipPath) => {
-  const isNew = !extensionPackageId;
+module.exports = async (envConfig, accessToken, extensionPackageManifest, extensionPackageFromServer, zipPath) => {
+  const shouldPost = !extensionPackageFromServer || extensionPackageFromServer.attributes.availability !== 'development';
+
+  if (extensionPackageFromServer) {
+    if (extensionPackageFromServer.attributes.availability === 'development') {
+      console.log(`An existing extension package with the name ` +
+        `${chalk.bold(extensionPackageManifest.name)} was found on the server and will be updated. ` +
+        `The extension package ID is ${chalk.bold(extensionPackageFromServer.id)}.`);
+    } else {
+      console.log(`An existing extension package with the name ` +
+        `${chalk.bold(extensionPackageManifest.name)} was found on the server, but because its ` +
+        `availability is not ${chalk.bold('development')}, a development version of the extension package ` +
+        `will be created.`);
+    }
+  } else {
+    console.log(`No extension package was found on the server with the ` +
+      `name ${chalk.bold(extensionPackageManifest.name)}. A new extension package will be created.`);
+  }
 
   const options = {
-    method: isNew ? 'POST' : 'PATCH',
-    url: isNew ?
+    method: shouldPost ? 'POST' : 'PATCH',
+    url: shouldPost ?
       envConfig.extensionPackages :
-      `${envConfig.extensionPackages}/${extensionPackageId}`,
+      `${envConfig.extensionPackages}/${extensionPackageFromServer.id}`,
     headers: getReactorHeaders(accessToken),
     formData: {
       package: fs.createReadStream(zipPath)
@@ -33,11 +49,10 @@ module.exports = async (envConfig, accessToken, extensionPackageId, zipPath) => 
 
   try {
     const body = await request(options);
-    extensionPackageId = body.data.id;
+    const extensionPackageId = body.data.id;
 
-    if (isNew) {
-      console.log(`The extension package has been assigned the ` +
-        `ID ${chalk.bold(extensionPackageId)}.`);
+    if (shouldPost) {
+      console.log(`The extension package has been assigned the ID ${chalk.bold(extensionPackageId)}.`);
     }
 
     return extensionPackageId;

@@ -11,22 +11,30 @@
  ****************************************************************************************/
 
 const proxyquire = require('proxyquire');
-const chalk = require('chalk');
 const getReactorHeaders = require('../getReactorHeaders');
 
-describe('getExtensionPackageId', () => {
+describe('getExtensionPackageFromServer', () => {
   const envConfig = {
     extensionPackages: 'https://extensionpackages'
   };
   const accessToken = 'fake-token';
-  const extensionPackageName = 'fake-extension';
+  const extensionPackageManifest = {
+    name: 'fake-extension',
+    platform: 'web'
+  };
   let mockRequest;
   let mockHandleResponseError;
-  let getExtensionPackageId;
+  let getExtensionPackageFromServer;
 
   const expectedRequestOptions = {
     method: 'GET',
-    url: 'https://extensionpackages?page[size]=1&page[number]=1&filter[name]=EQ fake-extension',
+    url: 'https://extensionpackages',
+    qs: {
+      'page[size]': 1,
+      'page[number]': 1,
+      'filter[name]': 'EQ fake-extension',
+      'filter[platform]': 'EQ web'
+    },
     headers: getReactorHeaders('fake-token'),
     transform: JSON.parse
   };
@@ -34,7 +42,7 @@ describe('getExtensionPackageId', () => {
   beforeEach(() => {
     mockRequest = jasmine.createSpy();
     mockHandleResponseError = jasmine.createSpy().and.throwError();
-    getExtensionPackageId = proxyquire('../getExtensionPackageId', {
+    getExtensionPackageFromServer = proxyquire('../getExtensionPackageFromServer', {
       'request-promise-native': mockRequest,
       './handleResponseError': mockHandleResponseError
     });
@@ -50,28 +58,21 @@ describe('getExtensionPackageId', () => {
       ]
     });
 
-    const result = await getExtensionPackageId(envConfig, accessToken, extensionPackageName);
+    const result = await getExtensionPackageFromServer(envConfig, accessToken, extensionPackageManifest);
 
     expect(mockRequest).toHaveBeenCalledWith(expectedRequestOptions);
-    expect(result).toBe('EP123');
-    expect(console.log).toHaveBeenCalledWith(`An existing extension package with ` +
-      `the name ${chalk.bold('fake-extension')} was ` +
-      `found on the server and will be updated. The extension package ID ` +
-      `is ${chalk.bold('EP123')}.`);
+    expect(result.id).toBe('EP123');
   });
 
-  it('returns undefined if no extension package found', async () => {
+  it('returns null if no extension package found', async () => {
     mockRequest.and.returnValue({
       data: []
     });
 
-    const result = await getExtensionPackageId(envConfig, accessToken, extensionPackageName);
+    const result = await getExtensionPackageFromServer(envConfig, accessToken, extensionPackageManifest);
 
     expect(mockRequest).toHaveBeenCalledWith(expectedRequestOptions);
-    expect(result).toBeUndefined();
-    expect(console.log).toHaveBeenCalledWith(`No extension package was found on the server ` +
-      `with the name ${chalk.bold('fake-extension')}. ` +
-      `A new extension package will be created.`);
+    expect(result).toBeNull();
   });
 
   it('calls handleResponseError on response error', async () => {
@@ -79,7 +80,7 @@ describe('getExtensionPackageId', () => {
     mockRequest.and.throwError(error);
 
     try {
-      await getExtensionPackageId(envConfig, accessToken, extensionPackageName);
+      await getExtensionPackageFromServer(envConfig, accessToken, extensionPackageManifest);
     } catch (e) {}
 
     expect(mockRequest).toHaveBeenCalledWith(expectedRequestOptions);

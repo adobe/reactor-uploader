@@ -21,6 +21,11 @@ describe('uploadZip', () => {
   let mockHandleResponseError;
   let uploadZip;
 
+  const extensionPackageManifest = {
+    name: 'fake-extension',
+    platform: 'web'
+  };
+
   beforeEach(() => {
     mockRequest = jasmine.createSpy().and.returnValue({
       data: {
@@ -46,7 +51,8 @@ describe('uploadZip', () => {
         extensionPackages: 'https://extensionpackages.com',
       },
       'generatedAccessToken',
-      undefined,
+      extensionPackageManifest,
+      null,
       '/extension.zip'
     );
 
@@ -65,13 +71,19 @@ describe('uploadZip', () => {
     expect(extensionPackageId).toBe('EP123');
   });
 
-  it('uploads a zip for an existing extension package', async () => {
+  it('uploads a zip for an existing extension package with development availability', async () => {
     const extensionPackageId = await uploadZip(
       {
         extensionPackages: 'https://extensionpackages.com',
       },
       'generatedAccessToken',
-      'EP123',
+      extensionPackageManifest,
+      {
+        id: 'EP123',
+        attributes: {
+          availability: 'development'
+        }
+      },
       '/extension.zip'
     );
 
@@ -85,7 +97,41 @@ describe('uploadZip', () => {
       },
       transform: JSON.parse
     });
-    expect(console.log).not.toHaveBeenCalled();
+    expect(console.log).toHaveBeenCalledWith(`An existing extension package with the name ` +
+      `${chalk.bold('fake-extension')} was found on the server and will be updated. ` +
+      `The extension package ID is ${chalk.bold('EP123')}.`);
+    expect(extensionPackageId).toBe('EP123');
+  });
+
+  it('uploads a zip for an existing extension package with non-development availability', async () => {
+    const extensionPackageId = await uploadZip(
+      {
+        extensionPackages: 'https://extensionpackages.com',
+      },
+      'generatedAccessToken',
+      extensionPackageManifest,
+      {
+        id: 'EP123',
+        attributes: {
+          availability: 'private'
+        }
+      },
+      '/extension.zip'
+    );
+
+    expect(mockFs.createReadStream).toHaveBeenCalledWith('/extension.zip');
+    expect(mockRequest).toHaveBeenCalledWith({
+      method: 'POST',
+      url: 'https://extensionpackages.com',
+      headers: getReactorHeaders('generatedAccessToken'),
+      formData: {
+        package: mockReadStream
+      },
+      transform: JSON.parse
+    });
+    expect(console.log).toHaveBeenCalledWith(`An existing extension package with the name ` +
+      `${chalk.bold('fake-extension')} was found on the server, but because its availability is not ` +
+      `${chalk.bold('development')}, a development version of the extension package will be created.`);
     expect(extensionPackageId).toBe('EP123');
   });
 
@@ -99,7 +145,13 @@ describe('uploadZip', () => {
           extensionPackages: 'https://extensionpackages.com',
         },
         'generatedAccessToken',
-        'EP123',
+        extensionPackageManifest,
+        {
+          id: 'EP123',
+          attributes: {
+            availability: 'development'
+          }
+        },
         '/extension.zip'
       );
     } catch (e) {}

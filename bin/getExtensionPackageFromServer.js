@@ -11,7 +11,6 @@
  ****************************************************************************************/
 
 const request = require('request-promise-native');
-const chalk = require('chalk');
 const getReactorHeaders = require('./getReactorHeaders');
 const handleResponseError = require('./handleResponseError');
 
@@ -37,17 +36,5 @@ module.exports = async (envConfig, accessToken, extensionPackageManifest) => {
     handleResponseError(error, 'Error detecting whether extension package exists on server.');
   }
 
-  let extensionPackageId;
-
-  if (body.data.length) {
-    extensionPackageId = body.data[0].id;
-    console.log(`An existing extension package with the name ${chalk.bold(extensionPackageManifest.name)} was ` +
-      `found on the server and will be updated. The extension package ID ` +
-      `is ${chalk.bold(extensionPackageId)}.`);
-  } else {
-    console.log(`No extension package was found on the server with the ` +
-      `name ${chalk.bold(extensionPackageManifest.name)}. A new extension package will be created.`);
-  }
-
-  return extensionPackageId;
+  return body.data.length ? body.data[0] : null;
 };
