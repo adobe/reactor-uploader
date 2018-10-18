@@ -31,11 +31,11 @@ module.exports = async (argv) => {
             value: 'qe'
           },
           {
-            name: 'Integration (Adobe Internal Use Only)',
+            name: 'Integration',
             value: 'integration'
           },
           {
-            name: 'Production',
+            name: 'Production (Adobe Internal Use Only)',
             value: 'production'
           }
         ],
