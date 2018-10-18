@@ -15,6 +15,11 @@ const inquirer = require('inquirer');
 const jwt = require('jwt-simple');
 const request = require('request-promise-native');
 
+const METASCOPES = [
+  'ent_reactor_extension_developer_sdk',
+  'ent_reactor_admin_sdk'
+];
+
 const getIntegrationAccessToken = async (
   envConfig,
   {
@@ -83,38 +88,46 @@ const getIntegrationAccessToken = async (
     ]));
   }
 
-  const jwtPayload = {
-    exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24,
-    iss: orgId,
-    sub: techAccountId,
-    aud: envConfig.aud + apiKey,
-    [envConfig.metascope]: true
-  };
-  const privateKeyContent = fs.readFileSync(privateKey);
-  const jwtToken = jwt.encode(jwtPayload, privateKeyContent, 'RS256');
-  const requestOptions = {
-    method: 'POST',
-    url: envConfig.jwt,
-    headers: {
-      'Cache-Control': 'no-cache'
-    },
-    form: {
-      client_id: apiKey,
-      client_secret: clientSecret,
-      jwt_token: jwtToken
-    },
-    transform: JSON.parse
-  };
+  // The technical account could be configured with one of these metascopes (sometimes called roles).
+  // We have to try each one until we find the metascope that the account is using
+  // because apparently there's no API to figure out which metascope the account is using beforehand.
+  // If the account isn't configured for one of these metascopes, retrieving an access token
+  // will rightfully fail.
+  for (let i = 0; i < METASCOPES.length; i++) {
+    const metascope = METASCOPES[i];
+    const jwtPayload = {
+      exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24,
+      iss: orgId,
+      sub: techAccountId,
+      aud: envConfig.aud + apiKey,
+      [`${envConfig.scope}${metascope}`]: true
+    };
+    const privateKeyContent = fs.readFileSync(privateKey);
+    const jwtToken = jwt.encode(jwtPayload, privateKeyContent, 'RS256');
+    const requestOptions = {
+      method: 'POST',
+      url: envConfig.jwt,
+      headers: {
+        'Cache-Control': 'no-cache'
+      },
+      form: {
+        client_id: apiKey,
+        client_secret: clientSecret,
+        jwt_token: jwtToken
+      },
+      transform: JSON.parse
+    };
 
-  let body;
-
-  try {
-    body = await request(requestOptions);
-  } catch (error) {
-    throw new Error(`Error retrieving access token. ${JSON.parse(error.error).error_description}`);
+    try {
+      const body = await request(requestOptions);
+      return body.access_token;
+    } catch (error) {
+      const parsedErrorObject = JSON.parse(error.error);
+      if (parsedErrorObject.error !== 'invalid_scope' || i === METASCOPES.length - 1) {
+        throw new Error(`Error retrieving access token. ${parsedErrorObject.error_description}`);
+      }
+    }
   }
-
-  return body.access_token;
 };
 
 const getUserEnteredAccessToken = async () => {
