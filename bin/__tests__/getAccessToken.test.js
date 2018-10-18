@@ -12,6 +12,11 @@
 
 const proxyquire = require('proxyquire');
 
+const METASCOPES = [
+  'ent_reactor_extension_developer_sdk',
+  'ent_reactor_admin_sdk'
+];
+
 describe('getAccessToken', () => {
   let getAccessToken;
   let mockInquirer;
@@ -26,7 +31,7 @@ describe('getAccessToken', () => {
       prompt: jasmine.createSpy()
     };
     mockFs = {
-      readFileSync: () => ''
+      readFileSync: () => 'privateKey'
     };
     mockJwt = {
       encode: jasmine.createSpy().and.returnValue('generatedJwtToken')
@@ -181,6 +186,43 @@ describe('getAccessToken', () => {
       }
 
       expect(errorMessage).toBe('Error retrieving access token. Bad things happened.');
+    });
+
+    it('attempts authenticating with each supported metascope', async () => {
+      const error = new Error();
+      error.error = '{"error":"invalid_scope","error_description":"Invalid metascope."}';
+      mockRequest.and.throwError(error);
+
+      let errorMessage;
+      try {
+        await getAccessToken({
+          jwt: 'https://jwtendpoint.com',
+          aud: 'https://aud.com/c/',
+          scope: 'https://scope.com/s/'
+        }, {
+          privateKey: 'MyPrivateKey',
+          orgId: 'MyOrgId',
+          techAccountId: 'MyTechAccountId',
+          apiKey: 'MyApiKey',
+          clientSecret: 'MyClientSecret'
+        });
+      } catch (error) {
+        errorMessage = error.message;
+      }
+
+      METASCOPES.forEach((metascope) => {
+        expect(mockJwt.encode).toHaveBeenCalledWith({
+          exp: jasmine.any(Number),
+          iss: 'MyOrgId',
+          sub: 'MyTechAccountId',
+          aud: 'https://aud.com/c/MyApiKey',
+          [`https://scope.com/s/${metascope}`]: true
+        }, 'privateKey', 'RS256');
+      });
+      expect(mockRequest).toHaveBeenCalledWith(expectedRequestOptions);
+      expect(mockRequest.calls.count()).toBe(METASCOPES.length);
+      // This tests that if all metascopes fail, the error from the last attempt is ultimately thrown.
+      expect(errorMessage).toBe('Error retrieving access token. Invalid metascope.');
     });
   });
 

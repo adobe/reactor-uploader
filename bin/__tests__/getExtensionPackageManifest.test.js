@@ -11,19 +11,19 @@
  ****************************************************************************************/
 
 const path = require('path');
-const getExtensionPackageName = require('../getExtensionPackageName');
+const getExtensionPackageManifest = require('../getExtensionPackageManifest');
 
-describe('getExtensionPackageName', () => {
+describe('getExtensionPackageManifest', () => {
   it('returns name for valid extension package zip', async () => {
-    const result = await getExtensionPackageName(path.join(__dirname, 'singleZip', 'helloWorld.zip'));
-    expect(result).toBe('hello-world');
+    const result = await getExtensionPackageManifest(path.join(__dirname, 'singleZip', 'helloWorld.zip'));
+    expect(result.name).toBe('hello-world');
   });
 
   it('throws error for corrupt extension package zip', async () => {
     let errorMessage;
 
     try {
-      await getExtensionPackageName(path.join(__dirname, 'badZips', 'corrupt.zip'));
+      await getExtensionPackageManifest(path.join(__dirname, 'badZips', 'corrupt.zip'));
     } catch (error) {
       errorMessage = error.message;
     }
@@ -35,7 +35,7 @@ describe('getExtensionPackageName', () => {
     let errorMessage;
 
     try {
-      await getExtensionPackageName(path.join(__dirname, 'badZips', 'noExtensionJson.zip'));
+      await getExtensionPackageManifest(path.join(__dirname, 'badZips', 'noExtensionJson.zip'));
     } catch (error) {
       errorMessage = error.message;
     }

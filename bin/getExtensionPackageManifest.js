@@ -29,7 +29,7 @@ module.exports = (zipPath) => {
             readStream.on('data', chunk => chunks.push(chunk));
             readStream.on('end', () => {
               const manifest = JSON.parse(Buffer.concat(chunks).toString());
-              resolve(manifest.name);
+              resolve(manifest);
               zipFile.close();
             });
           });
