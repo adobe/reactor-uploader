@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  ****************************************************************************************/
 
+const os = require('os');
+const chalk = require('chalk');
 const proxyquire = require('proxyquire');
 const getReactorHeaders = require('../getReactorHeaders');
 
@@ -114,6 +116,8 @@ describe('monitorStatus', () => {
     expect(mockRequest).toHaveBeenCalledWith(expectedRequestOptions);
     expect(spinner.start).toHaveBeenCalled();
     expect(spinner.stop).toHaveBeenCalled();
-    expect(errorMessage).toBe('Extension package processing failed. Bad Thing Happened. Something really bad happened.');
+    expect(errorMessage).toBe(`Extension package processing failed. ` +
+      `${os.EOL}${chalk.green('title: ')} Bad Thing Happened.${os.EOL}` +
+      `${chalk.green('detail: ')}Something really bad happened.`);
   });
 });

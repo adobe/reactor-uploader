@@ -10,6 +10,9 @@
  * governing permissions and limitations under the License.
  ****************************************************************************************/
 
+const os = require('os');
+const prettyjson = require('prettyjson');
+
 module.exports = (error) => {
-  return `${error.title}${error.detail ? ' ' + error.detail : ''}`;
+  return os.EOL + prettyjson.render(error);
 };
