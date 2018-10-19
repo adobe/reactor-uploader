@@ -66,6 +66,8 @@ describe('uploadZip', () => {
       },
       transform: JSON.parse
     });
+    expect(console.log).toHaveBeenCalledWith(`No extension package was found on the server with the ` +
+      `name ${chalk.bold('fake-extension')}. A new extension package will be created.`);
     expect(console.log).toHaveBeenCalledWith(`The extension package has been assigned the ` +
       `ID ${chalk.bold('EP123')}.`);
     expect(extensionPackageId).toBe('EP123');
