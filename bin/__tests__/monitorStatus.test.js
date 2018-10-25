@@ -22,6 +22,7 @@ describe('monitorStatus', () => {
   const accessToken = 'fake-token';
   const extensionPackageId = 'EP123';
   let mockRequest;
+  let mockLogVerboseHeader;
   let monitorStatus;
   let spinner;
 
@@ -34,6 +35,7 @@ describe('monitorStatus', () => {
 
   beforeEach(() => {
     mockRequest = jasmine.createSpy();
+    mockLogVerboseHeader = jasmine.createSpy();
     const mockHandleResponseError = jasmine.createSpy().and.throwError();
     monitorStatus = proxyquire('../monitorStatus', {
       'request-promise-native': mockRequest,
@@ -43,6 +45,7 @@ describe('monitorStatus', () => {
       },
       'delay': () => {},
       './handleResponseError': mockHandleResponseError,
+      './logVerboseHeader': mockLogVerboseHeader
     });
   });
 
@@ -55,7 +58,7 @@ describe('monitorStatus', () => {
       }
     });
 
-    await monitorStatus(envConfig, accessToken, extensionPackageId);
+    await monitorStatus(envConfig, accessToken, extensionPackageId, {});
 
     expect(mockRequest).toHaveBeenCalledWith(expectedRequestOptions);
     expect(spinner.start).toHaveBeenCalled();
@@ -74,7 +77,7 @@ describe('monitorStatus', () => {
     let errorMessage;
 
     try {
-      await monitorStatus(envConfig, accessToken, extensionPackageId);
+      await monitorStatus(envConfig, accessToken, extensionPackageId, {});
     } catch (error) {
       errorMessage = error.message;
     }
@@ -108,7 +111,7 @@ describe('monitorStatus', () => {
     let errorMessage;
 
     try {
-      await monitorStatus(envConfig, accessToken, extensionPackageId);
+      await monitorStatus(envConfig, accessToken, extensionPackageId, {});
     } catch (error) {
       errorMessage = error.message;
     }
@@ -119,5 +122,13 @@ describe('monitorStatus', () => {
     expect(errorMessage).toBe(`Extension package processing failed. ` +
       `${os.EOL}${chalk.green('title: ')} Bad Thing Happened.${os.EOL}` +
       `${chalk.green('detail: ')}Something really bad happened.`);
+  });
+
+  it('logs additional detail in verbose mode', async () => {
+    try {
+      await monitorStatus(envConfig, accessToken, extensionPackageId, { verbose: true });
+    } catch (error) {}
+
+    expect(mockLogVerboseHeader).toHaveBeenCalledWith('Checking extension package status');
   });
 });

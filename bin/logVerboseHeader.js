@@ -1,5 +1,5 @@
 /***************************************************************************************
- * (c) 2017 Adobe. All rights reserved.
+ * (c) 2018 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,18 +10,8 @@
  * governing permissions and limitations under the License.
  ****************************************************************************************/
 
-const getMessageFromReactorError = require('./getMessageFromReactorError');
+const DIVIDER = '----------';
 
-module.exports = (error, messagePrefix) => {
-  let message;
-
-  if (error.response && error.response.message) { // Error from Adobe I/O
-    message = error.response.message;
-  } else if (error.response && error.response.errors) { // Error from Reactor
-    message = getMessageFromReactorError(error.response.errors[0]);
-  } else {
-    message = 'An unknown error occurred.';
-  }
-
-  throw new Error(messagePrefix + ' ' + message);
+module.exports = (message) => {
+  console.log(`\n${DIVIDER}\n${message}\n${DIVIDER}`);
 };

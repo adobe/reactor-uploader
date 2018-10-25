@@ -16,12 +16,24 @@ const ora = require('ora');
 const getReactorHeaders = require('./getReactorHeaders');
 const handleResponseError = require('./handleResponseError');
 const getMessageFromReactorError = require('./getMessageFromReactorError');
+const logVerboseHeader = require('./logVerboseHeader');
 
 const MAX_RETRIES = 50;
 
-const requestStatus = async (envConfig, accessToken, extensionPackageId, spinner, retries = 0) => {
+const requestStatus = async (
+  envConfig,
+  accessToken,
+  extensionPackageId,
+  argv,
+  spinner,
+  retries = 0
+) => {
   if (retries >= MAX_RETRIES) {
     throw new Error('The extension package failed to be processed within the expected timeframe.');
+  }
+
+  if (argv.verbose) {
+    logVerboseHeader('Checking extension package status');
   }
 
   const options = {
@@ -46,7 +58,7 @@ const requestStatus = async (envConfig, accessToken, extensionPackageId, spinner
     spinner.succeed('The extension package was successfully processed.');
   } else if (status === 'pending') {
     await delay(1000);
-    return requestStatus(envConfig, accessToken, extensionPackageId, spinner, retries + 1);
+    return requestStatus(envConfig, accessToken, extensionPackageId, argv, spinner, retries + 1);
   } else if (status === 'failed') {
     spinner.stop();
     const error = body.data.meta.status_details.errors[0];
@@ -57,8 +69,8 @@ const requestStatus = async (envConfig, accessToken, extensionPackageId, spinner
   }
 };
 
-module.exports = async (envConfig, accessToken, extensionPackageId) => {
+module.exports = async (envConfig, accessToken, extensionPackageId, argv) => {
   const spinner = ora('The extension package is being processed...');
   spinner.start();
-  return requestStatus(envConfig, accessToken, extensionPackageId, spinner);
+  return requestStatus(envConfig, accessToken, extensionPackageId, argv, spinner);
 };

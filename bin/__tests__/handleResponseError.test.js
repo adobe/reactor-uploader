@@ -58,7 +58,7 @@ describe('handleResponseError', () => {
 
     try {
       handleResponseError({
-        response: {}
+        something: 'unexpected'
       }, 'Failed to do something.');
     } catch (error) {
       errorMessage = error.message;

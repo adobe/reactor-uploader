@@ -13,8 +13,14 @@
 const request = require('request-promise-native');
 const getReactorHeaders = require('./getReactorHeaders');
 const handleResponseError = require('./handleResponseError');
+const logVerboseHeader = require('./logVerboseHeader');
 
-module.exports = async (envConfig, accessToken, extensionPackageManifest) => {
+module.exports = async (
+  envConfig,
+  accessToken,
+  extensionPackageManifest,
+  argv
+) => {
   const options = {
     method: 'GET',
     url: `${envConfig.extensionPackages}`,
@@ -27,6 +33,10 @@ module.exports = async (envConfig, accessToken, extensionPackageManifest) => {
     headers: getReactorHeaders(accessToken),
     transform: JSON.parse
   };
+
+  if (argv.verbose) {
+    logVerboseHeader('Retrieving extension package from server');
+  }
 
   let body;
 

@@ -31,6 +31,7 @@
     "ora": "^2.1.0",
     "prettyjson": "^1.2.1",
     "request": "^2.87.0",
+    "request-debug": "^0.2.0",
     "request-promise-native": "^1.0.5",
     "yargs": "^11.0.0",
     "yauzl": "^2.9.1"

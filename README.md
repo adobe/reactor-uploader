@@ -93,6 +93,10 @@ Optionally, rather than passing the client secret as a command line argument, it
 
 A valid access token.
 
+##### --verbose
+
+Logs additional information useful for debugging.
+
 ## Contributing
 
 Contributions are welcomed! Read the [Contributing Guide](CONTRIBUTING.md) for more information.

@@ -24,6 +24,7 @@ describe('getExtensionPackageFromServer', () => {
   };
   let mockRequest;
   let mockHandleResponseError;
+  let mockLogVerboseHeader;
   let getExtensionPackageFromServer;
 
   const expectedRequestOptions = {
@@ -42,9 +43,11 @@ describe('getExtensionPackageFromServer', () => {
   beforeEach(() => {
     mockRequest = jasmine.createSpy();
     mockHandleResponseError = jasmine.createSpy().and.throwError();
+    mockLogVerboseHeader = jasmine.createSpy();
     getExtensionPackageFromServer = proxyquire('../getExtensionPackageFromServer', {
       'request-promise-native': mockRequest,
-      './handleResponseError': mockHandleResponseError
+      './handleResponseError': mockHandleResponseError,
+      './logVerboseHeader': mockLogVerboseHeader
     });
     spyOn(console, 'log');
   });
@@ -58,7 +61,7 @@ describe('getExtensionPackageFromServer', () => {
       ]
     });
 
-    const result = await getExtensionPackageFromServer(envConfig, accessToken, extensionPackageManifest);
+    const result = await getExtensionPackageFromServer(envConfig, accessToken, extensionPackageManifest, {});
 
     expect(mockRequest).toHaveBeenCalledWith(expectedRequestOptions);
     expect(result.id).toBe('EP123');
@@ -69,7 +72,7 @@ describe('getExtensionPackageFromServer', () => {
       data: []
     });
 
-    const result = await getExtensionPackageFromServer(envConfig, accessToken, extensionPackageManifest);
+    const result = await getExtensionPackageFromServer(envConfig, accessToken, extensionPackageManifest, {});
 
     expect(mockRequest).toHaveBeenCalledWith(expectedRequestOptions);
     expect(result).toBeNull();
@@ -80,10 +83,18 @@ describe('getExtensionPackageFromServer', () => {
     mockRequest.and.throwError(error);
 
     try {
-      await getExtensionPackageFromServer(envConfig, accessToken, extensionPackageManifest);
+      await getExtensionPackageFromServer(envConfig, accessToken, extensionPackageManifest, {});
     } catch (e) {}
 
     expect(mockRequest).toHaveBeenCalledWith(expectedRequestOptions);
     expect(mockHandleResponseError).toHaveBeenCalledWith(error, jasmine.any(String));
+  });
+
+  it('logs additional detail in verbose mode', async () => {
+    try {
+      await getExtensionPackageFromServer(envConfig, accessToken, extensionPackageManifest, { verbose: true });
+    } catch (e) {}
+
+    expect(mockLogVerboseHeader).toHaveBeenCalledWith('Retrieving extension package from server');
   });
 });
