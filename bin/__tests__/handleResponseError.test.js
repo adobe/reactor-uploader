@@ -10,7 +10,9 @@
  * governing permissions and limitations under the License.
  ****************************************************************************************/
 
-let handleResponseError = require('../handleResponseError');
+const os = require('os');
+const chalk = require('chalk');
+const handleResponseError = require('../handleResponseError');
 
 describe('handleResponseError', () => {
   it('throws an error for Adobe I/O error response', () => {
@@ -47,7 +49,8 @@ describe('handleResponseError', () => {
       errorMessage = error.message;
     }
 
-    expect(errorMessage).toBe('Failed to do something. Disk Error. Out of disk space.');
+    expect(errorMessage).toBe(`Failed to do something. ` +
+      `${os.EOL}${chalk.green('title: ')} Disk Error.${os.EOL}${chalk.green('detail: ')}Out of disk space.`);
   });
 
   it('throws an error for unknown type of error response', () => {
