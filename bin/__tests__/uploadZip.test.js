@@ -19,6 +19,7 @@ describe('uploadZip', () => {
   let mockFs;
   let mockReadStream;
   let mockHandleResponseError;
+  let mockLogVerboseHeader;
   let uploadZip;
 
   const extensionPackageManifest = {
@@ -37,11 +38,13 @@ describe('uploadZip', () => {
       createReadStream: jasmine.createSpy().and.returnValue(mockReadStream)
     };
     mockHandleResponseError = jasmine.createSpy().and.throwError();
+    mockLogVerboseHeader = jasmine.createSpy();
     spyOn(console, 'log');
     uploadZip = proxyquire('../uploadZip', {
       fs: mockFs,
       'request-promise-native': mockRequest,
-      './handleResponseError': mockHandleResponseError
+      './handleResponseError': mockHandleResponseError,
+      './logVerboseHeader': mockLogVerboseHeader
     });
   });
 
@@ -53,7 +56,8 @@ describe('uploadZip', () => {
       'generatedAccessToken',
       extensionPackageManifest,
       null,
-      '/extension.zip'
+      '/extension.zip',
+      {}
     );
 
     expect(mockFs.createReadStream).toHaveBeenCalledWith('/extension.zip');
@@ -84,7 +88,8 @@ describe('uploadZip', () => {
           availability: 'development'
         }
       },
-      '/extension.zip'
+      '/extension.zip',
+      {}
     );
 
     expect(mockFs.createReadStream).toHaveBeenCalledWith('/extension.zip');
@@ -116,7 +121,8 @@ describe('uploadZip', () => {
           availability: 'private'
         }
       },
-      '/extension.zip'
+      '/extension.zip',
+      {}
     );
 
     expect(mockFs.createReadStream).toHaveBeenCalledWith('/extension.zip');
@@ -152,10 +158,26 @@ describe('uploadZip', () => {
             availability: 'development'
           }
         },
-        '/extension.zip'
+        '/extension.zip',
+        {}
       );
     } catch (e) {}
 
     expect(mockHandleResponseError).toHaveBeenCalledWith(error, jasmine.any(String));
+  });
+
+  it('logs additional detail in verbose mode', async () => {
+    await uploadZip(
+      {
+        extensionPackages: 'https://extensionpackages.com',
+      },
+      'generatedAccessToken',
+      extensionPackageManifest,
+      null,
+      '/extension.zip',
+      { verbose: true }
+    );
+
+    expect(mockLogVerboseHeader).toHaveBeenCalledWith('Uploading zip');
   });
 });

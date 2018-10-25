@@ -23,6 +23,7 @@ describe('getAccessToken', () => {
   let mockFs;
   let mockJwt;
   let mockRequest;
+  let mockLogVerboseHeader;
 
   beforeEach(() => {
     process.env.TEST_PRIVATE_KEY = 'MyPrivateKey';
@@ -39,13 +40,17 @@ describe('getAccessToken', () => {
     mockRequest = jasmine.createSpy().and.returnValue({
       access_token: 'generatedAccessToken'
     });
+    mockLogVerboseHeader = jasmine.createSpy();
 
     getAccessToken = proxyquire('../getAccessToken', {
       inquirer: mockInquirer,
       fs: mockFs,
       'jwt-simple': mockJwt,
-      'request-promise-native': mockRequest
+      'request-promise-native': mockRequest,
+      './logVerboseHeader': mockLogVerboseHeader
     });
+
+    spyOn(console, 'log');
   });
 
   afterEach(() => {
@@ -158,6 +163,34 @@ describe('getAccessToken', () => {
         apiKey: 'MyApiKey'
       });
 
+      expect(mockRequest).toHaveBeenCalledWith(expectedRequestOptions);
+      expect(accessToken).toBe('generatedAccessToken');
+    });
+
+    it('logs additional detail in verbose mode', async () => {
+      const accessToken = await getAccessToken({
+        jwt: 'https://jwtendpoint.com',
+        aud: 'https://aud.com/c/',
+        scope: 'https://scope.com/s/'
+      }, {
+        privateKey: 'MyPrivateKey',
+        orgId: 'MyOrgId',
+        techAccountId: 'MyTechAccountId',
+        apiKey: 'MyApiKey',
+        clientSecret: 'MyClientSecret',
+        verbose: true
+      });
+
+      expect(mockLogVerboseHeader)
+        .toHaveBeenCalledWith('Authenticating with metascope ent_reactor_extension_developer_sdk');
+      expect(console.log).toHaveBeenCalledWith('JWT Payload:');
+      expect(console.log).toHaveBeenCalledWith({
+        exp: jasmine.any(Number),
+        iss: 'MyOrgId',
+        sub: 'MyTechAccountId',
+        aud: 'https://aud.com/c/MyApiKey',
+        'https://scope.com/s/ent_reactor_extension_developer_sdk': true
+      });
       expect(mockRequest).toHaveBeenCalledWith(expectedRequestOptions);
       expect(accessToken).toBe('generatedAccessToken');
     });

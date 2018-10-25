@@ -15,8 +15,16 @@ const chalk = require('chalk');
 const request = require('request-promise-native');
 const getReactorHeaders = require('./getReactorHeaders');
 const handleResponseError = require('./handleResponseError');
+const logVerboseHeader = require('./logVerboseHeader');
 
-module.exports = async (envConfig, accessToken, extensionPackageManifest, extensionPackageFromServer, zipPath) => {
+module.exports = async (
+  envConfig,
+  accessToken,
+  extensionPackageManifest,
+  extensionPackageFromServer,
+  zipPath,
+  argv
+) => {
   const shouldPost = !extensionPackageFromServer || extensionPackageFromServer.attributes.availability !== 'development';
 
   if (extensionPackageFromServer) {
@@ -33,6 +41,10 @@ module.exports = async (envConfig, accessToken, extensionPackageManifest, extens
   } else {
     console.log(`No extension package was found on the server with the ` +
       `name ${chalk.bold(extensionPackageManifest.name)}. A new extension package will be created.`);
+  }
+
+  if (argv.verbose) {
+    logVerboseHeader('Uploading zip');
   }
 
   const options = {

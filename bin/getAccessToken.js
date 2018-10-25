@@ -14,6 +14,7 @@ const fs = require('fs');
 const inquirer = require('inquirer');
 const jwt = require('jwt-simple');
 const request = require('request-promise-native');
+const logVerboseHeader = require('./logVerboseHeader');
 
 const METASCOPES = [
   'ent_reactor_extension_developer_sdk',
@@ -27,7 +28,8 @@ const getIntegrationAccessToken = async (
     orgId,
     techAccountId,
     apiKey,
-    clientSecret
+    clientSecret,
+    verbose
   }
 ) => {
   privateKey = privateKey || process.env[envConfig.privateKeyEnvVar];
@@ -102,6 +104,13 @@ const getIntegrationAccessToken = async (
       aud: envConfig.aud + apiKey,
       [`${envConfig.scope}${metascope}`]: true
     };
+
+    if (verbose) {
+      logVerboseHeader(`Authenticating with metascope ${metascope}`);
+      console.log('JWT Payload:');
+      console.log(jwtPayload);
+    }
+
     const privateKeyContent = fs.readFileSync(privateKey);
     const jwtToken = jwt.encode(jwtPayload, privateKeyContent, 'RS256');
     const requestOptions = {
