@@ -3,7 +3,7 @@
     "jwt": "https://ims-na1-stg1.adobelogin.com/ims/exchange/jwt",
     "aud": "https://ims-na1-stg1.adobelogin.com/c/",
     "scope": "https://ims-na1-stg1.adobelogin.com/s/",
-    "extensionPackages": "https://mc-api-activation-reactor-dev.adobe.io/extension_packages",
+    "extensionPackages": "https://reactor-dev.adobe.io/extension_packages",
     "privateKeyEnvVar": "REACTOR_UPLOADER_PRIVATE_KEY_DEVELOPMENT",
     "clientSecretEnvVar": "REACTOR_UPLOADER_CLIENT_SECRET_DEVELOPMENT"
   },
@@ -11,7 +11,7 @@
     "jwt": "https://ims-na1-stg1.adobelogin.com/ims/exchange/jwt",
     "aud": "https://ims-na1-stg1.adobelogin.com/c/",
     "scope": "https://ims-na1-stg1.adobelogin.com/s/",
-    "extensionPackages": "https://mc-api-activation-reactor-qe.adobe.io/extension_packages",
+    "extensionPackages": "https://reactor-qe.adobe.io/extension_packages",
     "privateKeyEnvVar": "REACTOR_UPLOADER_PRIVATE_KEY_QE",
     "clientSecretEnvVar": "REACTOR_UPLOADER_CLIENT_SECRET_QE"
   },
@@ -19,7 +19,7 @@
     "jwt": "https://ims-na1.adobelogin.com/ims/exchange/jwt",
     "aud": "https://ims-na1.adobelogin.com/c/",
     "scope": "https://ims-na1.adobelogin.com/s/",
-    "extensionPackages": "https://mc-api-activation-reactor-integration.adobe.io/extension_packages",
+    "extensionPackages": "https://reactor-integration.adobe.io/extension_packages",
     "privateKeyEnvVar": "REACTOR_UPLOADER_PRIVATE_KEY_INTEGRATION",
     "clientSecretEnvVar": "REACTOR_UPLOADER_CLIENT_SECRET_INTEGRATION"
   },
@@ -27,7 +27,7 @@
     "jwt": "https://ims-na1.adobelogin.com/ims/exchange/jwt",
     "aud": "https://ims-na1.adobelogin.com/c/",
     "scope": "https://ims-na1.adobelogin.com/s/",
-    "extensionPackages": "https://mc-api-activation-reactor.adobe.io/extension_packages",
+    "extensionPackages": "https://reactor.adobe.io/extension_packages",
     "privateKeyEnvVar": "REACTOR_UPLOADER_PRIVATE_KEY_PRODUCTION",
     "clientSecretEnvVar": "REACTOR_UPLOADER_CLIENT_SECRET_PRODUCTION"
   }
