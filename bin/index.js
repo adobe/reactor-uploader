@@ -18,7 +18,7 @@ const argv = require('yargs')
   .options({
     environment: {
       type: 'string',
-      describe: 'The environment to which the extension packaqe should be uploaded.',
+      describe: 'The environment to which the extension packaqe should be uploaded (for Adobe internal use only).',
       choices: ['development', 'qe', 'integration', 'production']
     },
     'private-key': {
@@ -69,7 +69,7 @@ const envConfig = require('./envConfig');
       require('request-debug')(require('request-promise-native'));
     }
 
-    const environment = await getEnvironment(argv);
+    const environment = getEnvironment(argv);
     const envSpecificConfig = envConfig[environment];
     const accessToken = await getAccessToken(envSpecificConfig, argv);
     const zipPath = await getZipPath(argv);
