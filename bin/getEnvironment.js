@@ -10,12 +10,4 @@
  * governing permissions and limitations under the License.
  ****************************************************************************************/
 
-const inquirer = require('inquirer');
-
-module.exports = (argv) => {
-  if (argv.environment) {
-    return argv.environment;
-  }
-
-  return 'production';
-};
+module.exports = argv => argv.environment || 'production';
