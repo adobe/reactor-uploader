@@ -17,8 +17,8 @@ const METASCOPES = [
   'ent_reactor_admin_sdk'
 ];
 
-describe('getAccessToken', () => {
-  let getAccessToken;
+describe('getIntegrationAccessToken', () => {
+  let getIntegrationAccessToken;
   let mockInquirer;
   let mockFs;
   let mockJwt;
@@ -42,7 +42,7 @@ describe('getAccessToken', () => {
     });
     mockLogVerboseHeader = jasmine.createSpy();
 
-    getAccessToken = proxyquire('../getAccessToken', {
+    getIntegrationAccessToken = proxyquire('../getIntegrationAccessToken', {
       inquirer: mockInquirer,
       fs: mockFs,
       'jwt-simple': mockJwt,
@@ -56,37 +56,6 @@ describe('getAccessToken', () => {
   afterEach(() => {
     delete process.env.TEST_PRIVATE_KEY;
     delete process.env.TEST_CLIENT_SECRET;
-  });
-
-  it('returns access token argument', async () => {
-    const result = await getAccessToken({}, {
-      accessToken: 'ABC'
-    });
-
-    expect(result).toBe('ABC');
-  });
-
-  [
-    'orgId',
-    'techAccountId',
-    'apiKey'
-  ].forEach((argName) => {
-    it(`assumes user is authenticating via an integration if ${argName} argument is provided`, async () => {
-      mockInquirer.prompt.and.returnValue(new Promise((resolve) => {}));
-
-      getAccessToken({}, {
-        [argName]: 'ABC'
-      });
-
-      expect(mockInquirer.prompt).toHaveBeenCalledWith([
-        {
-          type: 'input',
-          name: 'privateKey',
-          message: jasmine.any(String),
-          validate: Boolean
-        }
-      ]);
-    });
   });
 
   describe('integration authentication method', () => {
@@ -129,7 +98,7 @@ describe('getAccessToken', () => {
         }
       });
 
-      const accessToken = await getAccessToken({
+      const accessToken = await getIntegrationAccessToken({
         jwt: 'https://jwtendpoint.com'
       }, {});
 
@@ -138,7 +107,7 @@ describe('getAccessToken', () => {
     });
 
     it('uses data from arguments', async () => {
-      const accessToken = await getAccessToken({
+      const accessToken = await getIntegrationAccessToken({
         jwt: 'https://jwtendpoint.com'
       }, {
         privateKey: 'MyPrivateKey',
@@ -153,7 +122,7 @@ describe('getAccessToken', () => {
     });
 
     it('uses environment variables if respective arguments do not exist', async () => {
-      const accessToken = await getAccessToken({
+      const accessToken = await getIntegrationAccessToken({
         jwt: 'https://jwtendpoint.com',
         privateKeyEnvVar: 'TEST_PRIVATE_KEY',
         clientSecretEnvVar: 'TEST_CLIENT_SECRET',
@@ -168,7 +137,7 @@ describe('getAccessToken', () => {
     });
 
     it('logs additional detail in verbose mode', async () => {
-      const accessToken = await getAccessToken({
+      const accessToken = await getIntegrationAccessToken({
         jwt: 'https://jwtendpoint.com',
         aud: 'https://aud.com/c/',
         scope: 'https://scope.com/s/'
@@ -205,7 +174,7 @@ describe('getAccessToken', () => {
       let errorMessage;
 
       try {
-        await getAccessToken({
+        await getIntegrationAccessToken({
           jwt: 'https://jwtendpoint.com'
         }, {
           privateKey: 'MyPrivateKey',
@@ -228,7 +197,7 @@ describe('getAccessToken', () => {
 
       let errorMessage;
       try {
-        await getAccessToken({
+        await getIntegrationAccessToken({
           jwt: 'https://jwtendpoint.com',
           aud: 'https://aud.com/c/',
           scope: 'https://scope.com/s/'
@@ -258,29 +227,4 @@ describe('getAccessToken', () => {
       expect(errorMessage).toBe('Error retrieving access token. Invalid metascope.');
     });
   });
-
-  describe('access token authentication method', () => {
-    it('prompts for data', async () => {
-      mockInquirer.prompt.and.callFake((prompts) => {
-        switch (prompts[0].name) {
-          case 'authMethod':
-            return { authMethod: 'accessToken' };
-          case 'accessToken':
-            return { accessToken: 'MyAccessToken' };
-        }
-      });
-
-      const accessToken = await getAccessToken({}, {});
-
-      expect(accessToken).toBe('MyAccessToken');
-    });
-
-    it('uses data from arguments', async () => {
-      const accessToken = await getAccessToken({}, {
-        accessToken: 'MyAccessToken'
-      });
-
-      expect(accessToken).toBe('MyAccessToken');
-    });
-  })
 });

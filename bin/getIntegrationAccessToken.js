@@ -21,7 +21,7 @@ const METASCOPES = [
   'ent_reactor_admin_sdk'
 ];
 
-const getIntegrationAccessToken = async (
+module.exports = async (
   envConfig,
   {
     privateKey,
@@ -137,60 +137,4 @@ const getIntegrationAccessToken = async (
       }
     }
   }
-};
-
-const getUserEnteredAccessToken = async () => {
-  const { accessToken } = await inquirer.prompt([
-    {
-      type: 'input',
-      name: 'accessToken',
-      message: 'What is your access token?',
-      validate: Boolean
-    }
-  ]);
-
-  return accessToken;
-};
-
-module.exports = async (envConfig, argv) => {
-  if (argv.accessToken) {
-    return argv.accessToken;
-  }
-
-  // argv.privateKey or argv.clientSecret might be defined if the user has their respective
-  // environment variables set. We won't assume they want to use JWT if only the environment
-  // variables are set, but instead check to see if there's a more explicit indication that
-  // they want to use JWT by seeing if they've explicitly passed one of the
-  // other JWT-related options.
-  if (
-    argv.orgId ||
-    argv.techAccountId ||
-    argv.apiKey
-  ) {
-    return getIntegrationAccessToken(envConfig, argv);
-  }
-
-  const { authMethod } = await inquirer.prompt([
-    {
-      type: 'list',
-      name: 'authMethod',
-      message: 'How would you like to authenticate?',
-      choices: [
-        {
-          name: 'Provide Adobe I/O integration details',
-          value: 'integration'
-        },
-        {
-          name: 'Provide access token',
-          value: 'accessToken'
-        }
-      ]
-    }
-  ]);
-
-  if (authMethod === 'integration') {
-    return getIntegrationAccessToken(envConfig, argv);
-  }
-
-  return getUserEnteredAccessToken();
 };
