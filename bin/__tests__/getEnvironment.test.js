@@ -23,44 +23,16 @@ describe('getEnvironment', () => {
     });
   });
 
-  it('returns environment argument', async () => {
-    const result = await getEnvironment({
+  it('returns environment argument', () => {
+    const result = getEnvironment({
       environment: 'qe'
     });
 
     expect(result).toBe('qe');
   });
 
-  it('prompts for environment', async () => {
-    mockInquirer.prompt = jasmine.createSpy().and.returnValue({ environment: 'qe' });
-    const result = await getEnvironment({});
-
-    expect(mockInquirer.prompt).toHaveBeenCalledWith([
-      {
-        type: 'list',
-        name: 'environment',
-        message: jasmine.any(String),
-        choices: [
-          {
-            name: jasmine.any(String),
-            value: 'development'
-          },
-          {
-            name: jasmine.any(String),
-            value: 'qe'
-          },
-          {
-            name: jasmine.any(String),
-            value: 'integration'
-          },
-          {
-            name: jasmine.any(String),
-            value: 'production'
-          }
-        ],
-        default: 2
-      }
-    ]);
-    expect(result).toBe('qe');
+  it('returns production as default', () => {
+    const result = getEnvironment({});
+    expect(result).toBe('production');
   });
 });

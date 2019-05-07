@@ -44,16 +44,12 @@ The uploader tool will ask for any information necessary to upload the zip file.
 To skip any of the questions the uploader would typically ask, you can pass the respective information as command line arguments. An example is as follows:
 
 ```
-npx @adobe/reactor-uploader package-myextension-1.0.0.zip --environment=production --private-key=/Users/jane/launchkeys/reactor_integration_private.key --org-id=01C20D883A7D42080A494212@AdobeOrg --tech-account-id=14A533A72B181CF90A44410D@techacct.adobe.com --api-key=192ce541b1144160941a83vb74e0e74d --client-secret=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+npx @adobe/reactor-uploader package-myextension-1.0.0.zip --private-key=/Users/jane/launchkeys/reactor_integration_private.key --org-id=01C20D883A7D42080A494212@AdobeOrg --tech-account-id=14A533A72B181CF90A44410D@techacct.adobe.com --api-key=192ce541b1144160941a83vb74e0e74d --client-secret=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 ```
 
 The first positional parameter is the path (relative or absolute) to the zip file you wish to upload. In the example, `package-myextension-1.0.0.zip` is passed as an argument for this parameter.
 
 The named parameters are as follows:
-
-##### --environment
-
-The environment to which the extension package should be uploaded. Valid options are `development`, `qe`, `integration`, and `production`. Users outside of Adobe will only use `production`.
 
 ##### --private-key (for authentication using an Adobe I/O integration)
 
@@ -96,6 +92,10 @@ A valid access token.
 ##### --verbose
 
 Logs additional information useful for debugging.
+
+##### --environment (for Adobe internal use only)
+
+The environment to which the extension package should be uploaded. Valid options are `development`, `qe`, `integration`, and `production`. The default value is `production`. Users outside of Adobe don't need to use this flag.
 
 ## Contributing
 

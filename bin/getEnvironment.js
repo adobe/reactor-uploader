@@ -10,39 +10,4 @@
  * governing permissions and limitations under the License.
  ****************************************************************************************/
 
-const inquirer = require('inquirer');
-
-module.exports = async (argv) => {
-  if (argv.environment) {
-    return argv.environment;
-  } else {
-    const { environment } = await inquirer.prompt([
-      {
-        type: 'list',
-        name: 'environment',
-        message: 'To which environment would you like to upload your extension package?',
-        choices: [
-          {
-            name: 'Development (Adobe Internal Use Only)',
-            value: 'development'
-          },
-          {
-            name: 'QE (Adobe Internal Use Only)',
-            value: 'qe'
-          },
-          {
-            name: 'Integration (Adobe Internal Use Only)',
-            value: 'integration'
-          },
-          {
-            name: 'Production',
-            value: 'production'
-          }
-        ],
-        default: 2
-      }
-    ]);
-
-    return environment;
-  }
-};
+module.exports = argv => argv.environment || 'production';
