@@ -41,10 +41,6 @@ const argv = require('yargs')
       type: 'string',
       describe: 'For authentication using an Adobe I/O integration. Your client secret. You can find this on the overview screen for the integration you have created within the Adobe I/O console (https://console.adobe.io). Optionally, rather than passing the client secret as a command line argument, it can instead be provided by setting one of the following environment variables, depending on the environment that will be receiving the extension package: REACTOR_UPLOADER_CLIENT_SECRET_DEVELOPMENT, REACTOR_UPLOADER_CLIENT_SECRET_QE, REACTOR_UPLOADER_CLIENT_SECRET_INTEGRATION, REACTOR_UPLOADER_CLIENT_SECRET_PRODUCTION'
     },
-    'access-token': {
-      type: 'string',
-      describe: 'For authentication using an access token. A valid access token.'
-    },
     verbose: {
       type: 'boolean',
       describe: 'Logs additional information useful for debugging.'
@@ -55,7 +51,7 @@ const argv = require('yargs')
 
 const chalk = require('chalk');
 const getEnvironment = require('./getEnvironment');
-const getAccessToken = require('./getAccessToken');
+const getIntegrationAccessToken = require('./getIntegrationAccessToken');
 const getZipPath = require('./getZipPath');
 const getExtensionPackageManifest = require('./getExtensionPackageManifest');
 const getExtensionPackageFromServer = require('./getExtensionPackageFromServer');
@@ -71,18 +67,18 @@ const envConfig = require('./envConfig');
 
     const environment = getEnvironment(argv);
     const envSpecificConfig = envConfig[environment];
-    const accessToken = await getAccessToken(envSpecificConfig, argv);
+    const integrationAccessToken = await getIntegrationAccessToken(envSpecificConfig, argv);
     const zipPath = await getZipPath(argv);
     const extensionPackageManifest = await getExtensionPackageManifest(zipPath);
     const extensionPackageFromServer = await getExtensionPackageFromServer(
       envSpecificConfig,
-      accessToken,
+      integrationAccessToken,
       extensionPackageManifest,
       argv
     );
     const extensionPackageId = await uploadZip(
       envSpecificConfig,
-      accessToken,
+      integrationAccessToken,
       extensionPackageManifest,
       extensionPackageFromServer,
       zipPath,
@@ -90,7 +86,7 @@ const envConfig = require('./envConfig');
     );
     await monitorStatus(
       envSpecificConfig,
-      accessToken,
+      integrationAccessToken,
       extensionPackageId,
       argv
     );
