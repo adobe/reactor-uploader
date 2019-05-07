@@ -12,7 +12,7 @@
 
 const inquirer = require('inquirer');
 
-module.exports = async (argv) => {
+module.exports = (argv) => {
   if (argv.environment) {
     return argv.environment;
   }
