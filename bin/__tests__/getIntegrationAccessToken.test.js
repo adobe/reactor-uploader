@@ -21,8 +21,6 @@ describe('getIntegrationAccessToken', () => {
   let getIntegrationAccessToken;
   let mockInquirer;
   let mockFs;
-  let mockJwt;
-  let mockRequest;
   let mockLogVerboseHeader;
 
   beforeEach(() => {
@@ -34,10 +32,7 @@ describe('getIntegrationAccessToken', () => {
     mockFs = {
       readFileSync: () => 'privateKey'
     };
-    mockJwt = {
-      encode: jasmine.createSpy().and.returnValue('generatedJwtToken')
-    };
-    mockRequest = jasmine.createSpy().and.returnValue({
+    mockAuth = jasmine.createSpy().and.returnValue({
       access_token: 'generatedAccessToken'
     });
     mockLogVerboseHeader = jasmine.createSpy();
@@ -45,8 +40,7 @@ describe('getIntegrationAccessToken', () => {
     getIntegrationAccessToken = proxyquire('../getIntegrationAccessToken', {
       inquirer: mockInquirer,
       fs: mockFs,
-      'jwt-simple': mockJwt,
-      'request-promise-native': mockRequest,
+      '@adobe/jwt-auth': mockAuth,
       './logVerboseHeader': mockLogVerboseHeader
     });
 
@@ -59,26 +53,14 @@ describe('getIntegrationAccessToken', () => {
   });
 
   describe('integration authentication method', () => {
-    const expectedRequestOptions = {
-      method: 'POST',
-      url: 'https://jwtendpoint.com',
-      headers: {
-        'Cache-Control': 'no-cache'
-      },
-      form: {
-        client_id: 'MyApiKey',
-        client_secret: 'MyClientSecret',
-        jwt_token: 'generatedJwtToken'
-      },
-      transform: JSON.parse
-    };
-
-    beforeEach(() => {
-      mockJwt.encode.and.returnValue('generatedJwtToken');
-      mockRequest.and.returnValue({
-        access_token: 'generatedAccessToken'
-      });
-    });
+    const expectedAuthOptions = (o = {}) => Object.assign({
+      clientId: 'MyApiKey',
+      clientSecret: 'MyClientSecret',
+      technicalAccountId: 'MyTechAccountId',
+      orgId: 'MyOrgId',
+      privateKey: 'privateKey',
+      metaScopes: [ 'https://scope.com/s/ent_reactor_extension_developer_sdk' ]
+    }, o);
 
     it('prompts for data', async () => {
       mockInquirer.prompt.and.callFake((prompts) => {
@@ -99,16 +81,16 @@ describe('getIntegrationAccessToken', () => {
       });
 
       const accessToken = await getIntegrationAccessToken({
-        jwt: 'https://jwtendpoint.com'
+        scope: 'https://scope.com/s/'
       }, {});
 
-      expect(mockRequest).toHaveBeenCalledWith(expectedRequestOptions);
+      expect(mockAuth).toHaveBeenCalledWith(expectedAuthOptions());
       expect(accessToken).toBe('generatedAccessToken');
     });
 
     it('uses data from arguments', async () => {
       const accessToken = await getIntegrationAccessToken({
-        jwt: 'https://jwtendpoint.com'
+        scope: 'https://scope.com/s/'
       }, {
         privateKey: 'MyPrivateKey',
         orgId: 'MyOrgId',
@@ -117,13 +99,13 @@ describe('getIntegrationAccessToken', () => {
         clientSecret: 'MyClientSecret'
       });
 
-      expect(mockRequest).toHaveBeenCalledWith(expectedRequestOptions);
+      expect(mockAuth).toHaveBeenCalledWith(expectedAuthOptions());
       expect(accessToken).toBe('generatedAccessToken');
     });
 
     it('uses environment variables if respective arguments do not exist', async () => {
       const accessToken = await getIntegrationAccessToken({
-        jwt: 'https://jwtendpoint.com',
+        scope: 'https://scope.com/s/',
         privateKeyEnvVar: 'TEST_PRIVATE_KEY',
         clientSecretEnvVar: 'TEST_CLIENT_SECRET',
       }, {
@@ -132,13 +114,12 @@ describe('getIntegrationAccessToken', () => {
         apiKey: 'MyApiKey'
       });
 
-      expect(mockRequest).toHaveBeenCalledWith(expectedRequestOptions);
+      expect(mockAuth).toHaveBeenCalledWith(expectedAuthOptions());
       expect(accessToken).toBe('generatedAccessToken');
     });
 
     it('logs additional detail in verbose mode', async () => {
       const accessToken = await getIntegrationAccessToken({
-        jwt: 'https://jwtendpoint.com',
         aud: 'https://aud.com/c/',
         scope: 'https://scope.com/s/'
       }, {
@@ -152,30 +133,21 @@ describe('getIntegrationAccessToken', () => {
 
       expect(mockLogVerboseHeader)
         .toHaveBeenCalledWith('Authenticating with metascope ent_reactor_extension_developer_sdk');
-      expect(console.log).toHaveBeenCalledWith('JWT Payload:');
-      expect(console.log).toHaveBeenCalledWith({
-        exp: jasmine.any(Number),
-        iss: 'MyOrgId',
-        sub: 'MyTechAccountId',
-        aud: 'https://aud.com/c/MyApiKey',
-        'https://scope.com/s/ent_reactor_extension_developer_sdk': true
-      });
-      expect(mockRequest).toHaveBeenCalledWith(expectedRequestOptions);
+      expect(mockAuth).toHaveBeenCalledWith(expectedAuthOptions());
       expect(accessToken).toBe('generatedAccessToken');
     });
 
     it('reports error retrieving access token', async () => {
-      const error = new Error();
-      error.error = JSON.stringify({
+      mockAuth.and.returnValue({
+        error: 'some error',
         error_description: 'Bad things happened.'
       });
-      mockRequest.and.throwError(error);
 
       let errorMessage;
 
       try {
         await getIntegrationAccessToken({
-          jwt: 'https://jwtendpoint.com'
+          scope: 'https://scope.com/s/'
         }, {
           privateKey: 'MyPrivateKey',
           orgId: 'MyOrgId',
@@ -191,14 +163,14 @@ describe('getIntegrationAccessToken', () => {
     });
 
     it('attempts authenticating with each supported metascope', async () => {
-      const error = new Error();
-      error.error = '{"error":"invalid_scope","error_description":"Invalid metascope."}';
-      mockRequest.and.throwError(error);
+      mockAuth.and.returnValue({
+        error: 'invalid_scope',
+        error_description: 'Invalid metascope.',
+      });
 
       let errorMessage;
       try {
         await getIntegrationAccessToken({
-          jwt: 'https://jwtendpoint.com',
           aud: 'https://aud.com/c/',
           scope: 'https://scope.com/s/'
         }, {
@@ -212,17 +184,14 @@ describe('getIntegrationAccessToken', () => {
         errorMessage = error.message;
       }
 
-      METASCOPES.forEach((metascope) => {
-        expect(mockJwt.encode).toHaveBeenCalledWith({
-          exp: jasmine.any(Number),
-          iss: 'MyOrgId',
-          sub: 'MyTechAccountId',
-          aud: 'https://aud.com/c/MyApiKey',
-          [`https://scope.com/s/${metascope}`]: true
-        }, 'privateKey', 'RS256');
-      });
-      expect(mockRequest).toHaveBeenCalledWith(expectedRequestOptions);
-      expect(mockRequest.calls.count()).toBe(METASCOPES.length);
+      expect(mockAuth).toHaveBeenCalledWith(expectedAuthOptions({
+        metaScopes: [ 'https://scope.com/s/ent_reactor_extension_developer_sdk' ]
+      }));
+
+      expect(mockAuth).toHaveBeenCalledWith(expectedAuthOptions({
+        metaScopes: [ 'https://scope.com/s/ent_reactor_admin_sdk' ]
+      }));
+      expect(mockAuth.calls.count()).toBe(METASCOPES.length);
       // This tests that if all metascopes fail, the error from the last attempt is ultimately thrown.
       expect(errorMessage).toBe('Error retrieving access token. Invalid metascope.');
     });
