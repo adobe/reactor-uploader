@@ -19,7 +19,7 @@ npm -v
 
 You will also need to have already created a zip file containing your extension package. The [@adobe/reactor-packager](https://www.npmjs.com/package/@adobe/reactor-packager) tool can be used to create such a zip file.
 
-Finally, you will need to be authorized to upload extensions to Launch. This is done by first creating an integration through Adobe I/O. Please see the [Getting Started guide](https://developer.adobelaunch.com/guides/extensions/getting-started/) for detailed steps on creating an integration and procuring extension management rights.
+Finally, you will need to be authorized to upload extensions to Launch. This is done by first creating an integration through Adobe I/O. Please see the [Access Tokens documentation](https://developer.adobelaunch.com/api/guides/access_tokens/) for detailed steps on creating an integration and procuring extension management rights.
 
 Once your zip file is ready to upload and you've been granted extension management rights, you can use the uploader tool in either a question-answer format or by passing information through command line arguments.
 
@@ -47,7 +47,7 @@ The named parameters are as follows:
 
 ##### --private-key (for authentication using an Adobe I/O integration)
 
-The local path (relative or absolute) to the RSA private key. Instructions on how to generate this key can be found in the [Getting Started guide](https://developer.adobelaunch.com/guides/extensions/getting-started/) and should have been used when creating your integration through the Adobe I/O console.
+The local path (relative or absolute) to the RSA private key. Instructions on how to generate this key can be found in the [Access Tokens documentation](https://developer.adobelaunch.com/api/guides/access_tokens/) and should have been used when creating your integration through the Adobe I/O console.
 
 Optionally, rather than passing the private key path as a command line argument, it can instead be provided by setting an environment variable. The environment variable should be named one of the following, depending on which Launch environment will be receiving the extension package:
 
