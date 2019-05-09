@@ -103,21 +103,21 @@ module.exports = async (
       logVerboseHeader(`Authenticating with metascope ${metascope}`);
     }
 
-    const response = await auth({
-      clientId: apiKey,
-      technicalAccountId: techAccountId,
-      orgId,
-      clientSecret,
-      privateKey: privateKeyContent,
-      metaScopes: [`${envConfig.scope}${metascope}`],
-    });
+    try {
+      const response = await auth({
+        clientId: apiKey,
+        technicalAccountId: techAccountId,
+        orgId,
+        clientSecret,
+        privateKey: privateKeyContent,
+        metaScopes: [`${envConfig.scope}${metascope}`],
+      });
 
-    if (response.access_token) {
       return response.access_token;
-    }
-
-    if (response.error !== 'invalid_scope' || i === METASCOPES.length - 1) {
-      throw new Error(`Error retrieving access token. ${response.error_description}`);
+    } catch (e) {
+      if (e.error !== 'invalid_scope' || i === METASCOPES.length - 1) {
+        throw new Error(`Error retrieving access token. ${e.error_description}`);
+      }
     }
   }
 };
