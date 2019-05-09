@@ -18,7 +18,7 @@ const argv = require('yargs')
   .options({
     environment: {
       type: 'string',
-      describe: 'The environment to which the extension packaqe should be uploaded (for Adobe internal use only).',
+      describe: 'The environment to which the extension package should be uploaded (for Adobe internal use only).',
       choices: ['development', 'qe', 'integration', 'production']
     },
     'private-key': {
