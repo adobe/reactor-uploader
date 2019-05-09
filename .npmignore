@@ -1,0 +1,5 @@
+__tests__
+.travis.yml
+.editorconfig
+jasmine.json
+adobe-reactor-uploader*.tgz
