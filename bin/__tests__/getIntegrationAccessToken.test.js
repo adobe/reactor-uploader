@@ -138,10 +138,10 @@ describe('getIntegrationAccessToken', () => {
     });
 
     it('reports error retrieving access token', async () => {
-      mockAuth.and.returnValue({
+      mockAuth.and.returnValue(Promise.reject({
         error: 'some error',
         error_description: 'Bad things happened.'
-      });
+      }));
 
       let errorMessage;
 
@@ -163,10 +163,10 @@ describe('getIntegrationAccessToken', () => {
     });
 
     it('attempts authenticating with each supported metascope', async () => {
-      mockAuth.and.returnValue({
+      mockAuth.and.returnValue(Promise.reject({
         error: 'invalid_scope',
         error_description: 'Invalid metascope.',
-      });
+      }));
 
       let errorMessage;
       try {
