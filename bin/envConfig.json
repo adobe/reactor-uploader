@@ -28,7 +28,7 @@
     "aud": "https://ims-na1.adobelogin.com/c/",
     "scope": "https://ims-na1.adobelogin.com/s/",
     "extensionPackages": "https://reactor.adobe.io/extension_packages",
-    "privateKeyEnvVar": "REACTOR_UPLOADER_PRIVATE_KEY_PRODUCTION",
-    "clientSecretEnvVar": "REACTOR_UPLOADER_CLIENT_SECRET_PRODUCTION"
+    "privateKeyEnvVar": "REACTOR_UPLOADER_PRIVATE_KEY",
+    "clientSecretEnvVar": "REACTOR_UPLOADER_CLIENT_SECRET"
   }
 }
