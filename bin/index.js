@@ -16,11 +16,6 @@ const argv = require('yargs')
   .usage('Usage: $0 <zipPath> [options]')
   .command('zipPath', 'The local path to the extension package zip file you wish to upload.')
   .options({
-    environment: {
-      type: 'string',
-      describe: 'The environment to which the extension package should be uploaded (for Adobe internal use only).',
-      choices: ['development', 'qe', 'integration', 'production']
-    },
     'private-key': {
       type: 'string',
       describe: 'For authentication using an Adobe I/O integration. The local path (relative or absolute) to the RSA private key. Instructions on how to generate this key can be found in the Getting Started guide (https://developer.adobelaunch.com/guides/extensions/getting-started/) and should have been used when creating your integration through the Adobe I/O console. Optionally, rather than passing the private key path as a command line argument, it can instead be provided by setting one of the following environment variables, depending on the environment that will be receiving the extension package: REACTOR_UPLOADER_PRIVATE_KEY_DEVELOPMENT, REACTOR_UPLOADER_PRIVATE_KEY_QE, REACTOR_UPLOADER_PRIVATE_KEY_INTEGRATION, REACTOR_UPLOADER_PRIVATE_KEY_PRODUCTION'
@@ -41,6 +36,11 @@ const argv = require('yargs')
       type: 'string',
       describe: 'For authentication using an Adobe I/O integration. Your client secret. You can find this on the overview screen for the integration you have created within the Adobe I/O console (https://console.adobe.io). Optionally, rather than passing the client secret as a command line argument, it can instead be provided by setting one of the following environment variables, depending on the environment that will be receiving the extension package: REACTOR_UPLOADER_CLIENT_SECRET_DEVELOPMENT, REACTOR_UPLOADER_CLIENT_SECRET_QE, REACTOR_UPLOADER_CLIENT_SECRET_INTEGRATION, REACTOR_UPLOADER_CLIENT_SECRET_PRODUCTION'
     },
+    environment: {
+      type: 'string',
+      describe: 'The environment to which the extension packaqe should be uploaded (for Adobe internal use only).',
+      choices: ['development', 'qe', 'integration']
+    },
     verbose: {
       type: 'boolean',
       describe: 'Logs additional information useful for debugging.'
@@ -58,6 +58,7 @@ const getExtensionPackageFromServer = require('./getExtensionPackageFromServer')
 const uploadZip = require('./uploadZip');
 const monitorStatus = require('./monitorStatus');
 const envConfig = require('./envConfig');
+const checkOldProductionEnvironmentVariables = require('./checkOldProductionEnvironmentVariables');
 
 (async () => {
   try {
@@ -67,6 +68,9 @@ const envConfig = require('./envConfig');
 
     const environment = getEnvironment(argv);
     const envSpecificConfig = envConfig[environment];
+
+    checkOldProductionEnvironmentVariables();
+
     const integrationAccessToken = await getIntegrationAccessToken(envSpecificConfig, argv);
     const zipPath = await getZipPath(argv);
     const extensionPackageManifest = await getExtensionPackageManifest(zipPath);
