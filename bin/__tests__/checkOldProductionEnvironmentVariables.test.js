@@ -40,4 +40,30 @@ describe('checkOldProductionEnvironmentVariables', () => {
     delete process.env.REACTOR_UPLOADER_CLIENT_SECRET_PRODUCTION;
     expect(errorMessage).toStartWith('The environment variables ');
   });
+
+  it('throws an error when REACTOR_UPLOADER_PRIVATE_KEY environment variable is defined', () => {
+    checkOldProductionEnvironmentVariables = require('../checkOldProductionEnvironmentVariables');
+    process.env.REACTOR_UPLOADER_PRIVATE_KEY = 'somekey';
+
+    try {
+      checkOldProductionEnvironmentVariables();
+    } catch (e) {
+      errorMessage = e.message;
+    }
+    delete process.env.REACTOR_UPLOADER_PRIVATE_KEY;
+    expect(errorMessage).toStartWith('The environment variables ');
+  });
+
+  it('throws an error when REACTOR_UPLOADER_CLIENT_SECRET environment variable is defined', () => {
+    checkOldProductionEnvironmentVariables = require('../checkOldProductionEnvironmentVariables');
+    process.env.REACTOR_UPLOADER_CLIENT_SECRET = 'some secret';
+
+    try {
+      checkOldProductionEnvironmentVariables();
+    } catch (e) {
+      errorMessage = e.message;
+    }
+    delete process.env.REACTOR_UPLOADER_CLIENT_SECRET;
+    expect(errorMessage).toStartWith('The environment variables ');
+  });
 });
