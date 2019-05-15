@@ -4,31 +4,31 @@
     "aud": "https://ims-na1-stg1.adobelogin.com/c/",
     "scope": "https://ims-na1-stg1.adobelogin.com/s/",
     "extensionPackages": "https://reactor-dev.adobe.io/extension_packages",
-    "privateKeyEnvVar": "REACTOR_UPLOADER_PRIVATE_KEY_DEVELOPMENT",
-    "clientSecretEnvVar": "REACTOR_UPLOADER_CLIENT_SECRET_DEVELOPMENT"
+    "privateKeyEnvVar": "REACTOR_IO_INTEGRATION_PRIVATE_KEY_DEVELOPMENT",
+    "clientSecretEnvVar": "REACTOR_IO_INTEGRATION_CLIENT_SECRET_DEVELOPMENT"
   },
   "qe": {
     "jwt": "https://ims-na1-stg1.adobelogin.com/ims/exchange/jwt",
     "aud": "https://ims-na1-stg1.adobelogin.com/c/",
     "scope": "https://ims-na1-stg1.adobelogin.com/s/",
     "extensionPackages": "https://reactor-qe.adobe.io/extension_packages",
-    "privateKeyEnvVar": "REACTOR_UPLOADER_PRIVATE_KEY_QE",
-    "clientSecretEnvVar": "REACTOR_UPLOADER_CLIENT_SECRET_QE"
+    "privateKeyEnvVar": "REACTOR_IO_INTEGRATION_PRIVATE_KEY_QE",
+    "clientSecretEnvVar": "REACTOR_IO_INTEGRATION_CLIENT_SECRET_QE"
   },
   "integration": {
     "jwt": "https://ims-na1.adobelogin.com/ims/exchange/jwt",
     "aud": "https://ims-na1.adobelogin.com/c/",
     "scope": "https://ims-na1.adobelogin.com/s/",
     "extensionPackages": "https://reactor-integration.adobe.io/extension_packages",
-    "privateKeyEnvVar": "REACTOR_UPLOADER_PRIVATE_KEY_INTEGRATION",
-    "clientSecretEnvVar": "REACTOR_UPLOADER_CLIENT_SECRET_INTEGRATION"
+    "privateKeyEnvVar": "REACTOR_IO_INTEGRATION_PRIVATE_KEY_INTEGRATION",
+    "clientSecretEnvVar": "REACTOR_IO_INTEGRATION_CLIENT_SECRET_INTEGRATION"
   },
   "production": {
     "jwt": "https://ims-na1.adobelogin.com/ims/exchange/jwt",
     "aud": "https://ims-na1.adobelogin.com/c/",
     "scope": "https://ims-na1.adobelogin.com/s/",
     "extensionPackages": "https://reactor.adobe.io/extension_packages",
-    "privateKeyEnvVar": "REACTOR_UPLOADER_PRIVATE_KEY",
-    "clientSecretEnvVar": "REACTOR_UPLOADER_CLIENT_SECRET"
+    "privateKeyEnvVar": "REACTOR_IO_INTEGRATION_PRIVATE_KEY",
+    "clientSecretEnvVar": "REACTOR_IO_INTEGRATION_CLIENT_SECRET"
   }
 }

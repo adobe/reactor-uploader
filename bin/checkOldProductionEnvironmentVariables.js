@@ -22,4 +22,16 @@ module.exports = () => {
         'update all your places where you use the old variable names!'
     );
   }
+
+  if (
+    process.env['REACTOR_UPLOADER_PRIVATE_KEY'] ||
+    process.env['REACTOR_UPLOADER_CLIENT_SECRET']
+  ) {
+    throw new Error(
+      'The environment variables REACTOR_UPLOADER_PRIVATE_KEY and ' +
+        'REACTOR_UPLOADER_CLIENT_SECRET were renamed. The new names are ' +
+        'REACTOR_IO_INTEGRATION_PRIVATE_KEY and REACTOR_IO_INTEGRATION_CLIENT_SECRET. Please ' +
+        'update all your places where you use the old variable names!'
+    );
+  }
 };
