@@ -17,19 +17,12 @@ const auth = require('@adobe/jwt-auth');
 
 const METASCOPES = [
   'ent_reactor_extension_developer_sdk',
-  'ent_reactor_admin_sdk'
+  'ent_reactor_admin_sdk',
 ];
 
 module.exports = async (
   envConfig,
-  {
-    privateKey,
-    orgId,
-    techAccountId,
-    apiKey,
-    clientSecret,
-    verbose
-  }
+  { privateKey, orgId, techAccountId, apiKey, clientSecret, verbose }
 ) => {
   privateKey = privateKey || process.env[envConfig.privateKeyEnvVar];
   clientSecret = clientSecret || process.env[envConfig.clientSecretEnvVar];
@@ -40,8 +33,8 @@ module.exports = async (
         type: 'input',
         name: 'privateKey',
         message: 'What is the path (relative or absolute) to your private key?',
-        validate: Boolean
-      }
+        validate: Boolean,
+      },
     ]));
   }
 
@@ -51,8 +44,8 @@ module.exports = async (
         type: 'input',
         name: 'orgId',
         message: 'What is your organization ID?',
-        validate: Boolean
-      }
+        validate: Boolean,
+      },
     ]));
   }
 
@@ -62,8 +55,8 @@ module.exports = async (
         type: 'input',
         name: 'techAccountId',
         message: 'What is your technical account ID?',
-        validate: Boolean
-      }
+        validate: Boolean,
+      },
     ]));
   }
 
@@ -73,8 +66,8 @@ module.exports = async (
         type: 'input',
         name: 'apiKey',
         message: 'What is your API key?',
-        validate: Boolean
-      }
+        validate: Boolean,
+      },
     ]));
   }
 
@@ -84,8 +77,8 @@ module.exports = async (
         type: 'input',
         name: 'clientSecret',
         message: 'What is your client secret?',
-        validate: Boolean
-      }
+        validate: Boolean,
+      },
     ]));
   }
 
@@ -111,12 +104,15 @@ module.exports = async (
         clientSecret,
         privateKey: privateKeyContent,
         metaScopes: [`${envConfig.scope}${metascope}`],
+        ims: envConfig.ims,
       });
 
       return response.access_token;
     } catch (e) {
       if (e.error !== 'invalid_scope' || i === METASCOPES.length - 1) {
-        throw new Error(`Error retrieving access token. ${e.error_description}`);
+        throw new Error(
+          `Error retrieving access token. ${e.error_description}`
+        );
       }
     }
   }

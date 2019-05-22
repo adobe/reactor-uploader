@@ -14,7 +14,7 @@ const proxyquire = require('proxyquire');
 
 const METASCOPES = [
   'ent_reactor_extension_developer_sdk',
-  'ent_reactor_admin_sdk'
+  'ent_reactor_admin_sdk',
 ];
 
 describe('getIntegrationAccessToken', () => {
@@ -27,13 +27,13 @@ describe('getIntegrationAccessToken', () => {
     process.env.TEST_PRIVATE_KEY = 'MyPrivateKey';
     process.env.TEST_CLIENT_SECRET = 'MyClientSecret';
     mockInquirer = {
-      prompt: jasmine.createSpy()
+      prompt: jasmine.createSpy(),
     };
     mockFs = {
-      readFileSync: () => 'privateKey'
+      readFileSync: () => 'privateKey',
     };
     mockAuth = jasmine.createSpy().and.returnValue({
-      access_token: 'generatedAccessToken'
+      access_token: 'generatedAccessToken',
     });
     mockLogVerboseHeader = jasmine.createSpy();
 
@@ -41,7 +41,7 @@ describe('getIntegrationAccessToken', () => {
       inquirer: mockInquirer,
       fs: mockFs,
       '@adobe/jwt-auth': mockAuth,
-      './logVerboseHeader': mockLogVerboseHeader
+      './logVerboseHeader': mockLogVerboseHeader,
     });
 
     spyOn(console, 'log');
@@ -53,17 +53,24 @@ describe('getIntegrationAccessToken', () => {
   });
 
   describe('integration authentication method', () => {
-    const expectedAuthOptions = (o = {}) => Object.assign({
-      clientId: 'MyApiKey',
-      clientSecret: 'MyClientSecret',
-      technicalAccountId: 'MyTechAccountId',
-      orgId: 'MyOrgId',
-      privateKey: 'privateKey',
-      metaScopes: [ 'https://scope.com/s/ent_reactor_extension_developer_sdk' ]
-    }, o);
+    const expectedAuthOptions = (o = {}) =>
+      Object.assign(
+        {
+          clientId: 'MyApiKey',
+          clientSecret: 'MyClientSecret',
+          technicalAccountId: 'MyTechAccountId',
+          orgId: 'MyOrgId',
+          privateKey: 'privateKey',
+          metaScopes: [
+            'https://scope.com/s/ent_reactor_extension_developer_sdk',
+          ],
+          ims: 'https://ims.com/c/',
+        },
+        o
+      );
 
     it('prompts for data', async () => {
-      mockInquirer.prompt.and.callFake((prompts) => {
+      mockInquirer.prompt.and.callFake(prompts => {
         switch (prompts[0].name) {
           case 'authMethod':
             return { authMethod: 'integration' };
@@ -80,120 +87,156 @@ describe('getIntegrationAccessToken', () => {
         }
       });
 
-      const accessToken = await getIntegrationAccessToken({
-        scope: 'https://scope.com/s/'
-      }, {});
+      const accessToken = await getIntegrationAccessToken(
+        {
+          scope: 'https://scope.com/s/',
+          ims: 'https://ims.com/c/',
+        },
+        {}
+      );
 
       expect(mockAuth).toHaveBeenCalledWith(expectedAuthOptions());
       expect(accessToken).toBe('generatedAccessToken');
     });
 
     it('uses data from arguments', async () => {
-      const accessToken = await getIntegrationAccessToken({
-        scope: 'https://scope.com/s/'
-      }, {
-        privateKey: 'MyPrivateKey',
-        orgId: 'MyOrgId',
-        techAccountId: 'MyTechAccountId',
-        apiKey: 'MyApiKey',
-        clientSecret: 'MyClientSecret'
-      });
+      const accessToken = await getIntegrationAccessToken(
+        {
+          scope: 'https://scope.com/s/',
+          ims: 'https://ims.com/c/',
+        },
+        {
+          privateKey: 'MyPrivateKey',
+          orgId: 'MyOrgId',
+          techAccountId: 'MyTechAccountId',
+          apiKey: 'MyApiKey',
+          clientSecret: 'MyClientSecret',
+        }
+      );
 
       expect(mockAuth).toHaveBeenCalledWith(expectedAuthOptions());
       expect(accessToken).toBe('generatedAccessToken');
     });
 
     it('uses environment variables if respective arguments do not exist', async () => {
-      const accessToken = await getIntegrationAccessToken({
-        scope: 'https://scope.com/s/',
-        privateKeyEnvVar: 'TEST_PRIVATE_KEY',
-        clientSecretEnvVar: 'TEST_CLIENT_SECRET',
-      }, {
-        orgId: 'MyOrgId',
-        techAccountId: 'MyTechAccountId',
-        apiKey: 'MyApiKey'
-      });
+      const accessToken = await getIntegrationAccessToken(
+        {
+          scope: 'https://scope.com/s/',
+          ims: 'https://ims.com/c/',
+          privateKeyEnvVar: 'TEST_PRIVATE_KEY',
+          clientSecretEnvVar: 'TEST_CLIENT_SECRET',
+        },
+        {
+          orgId: 'MyOrgId',
+          techAccountId: 'MyTechAccountId',
+          apiKey: 'MyApiKey',
+        }
+      );
 
       expect(mockAuth).toHaveBeenCalledWith(expectedAuthOptions());
       expect(accessToken).toBe('generatedAccessToken');
     });
 
     it('logs additional detail in verbose mode', async () => {
-      const accessToken = await getIntegrationAccessToken({
-        aud: 'https://aud.com/c/',
-        scope: 'https://scope.com/s/'
-      }, {
-        privateKey: 'MyPrivateKey',
-        orgId: 'MyOrgId',
-        techAccountId: 'MyTechAccountId',
-        apiKey: 'MyApiKey',
-        clientSecret: 'MyClientSecret',
-        verbose: true
-      });
+      const accessToken = await getIntegrationAccessToken(
+        {
+          ims: 'https://ims.com/c/',
+          scope: 'https://scope.com/s/',
+        },
+        {
+          privateKey: 'MyPrivateKey',
+          orgId: 'MyOrgId',
+          techAccountId: 'MyTechAccountId',
+          apiKey: 'MyApiKey',
+          clientSecret: 'MyClientSecret',
+          verbose: true,
+        }
+      );
 
-      expect(mockLogVerboseHeader)
-        .toHaveBeenCalledWith('Authenticating with metascope ent_reactor_extension_developer_sdk');
+      expect(mockLogVerboseHeader).toHaveBeenCalledWith(
+        'Authenticating with metascope ent_reactor_extension_developer_sdk'
+      );
       expect(mockAuth).toHaveBeenCalledWith(expectedAuthOptions());
       expect(accessToken).toBe('generatedAccessToken');
     });
 
     it('reports error retrieving access token', async () => {
-      mockAuth.and.returnValue(Promise.reject({
-        error: 'some error',
-        error_description: 'Bad things happened.'
-      }));
+      mockAuth.and.returnValue(
+        Promise.reject({
+          error: 'some error',
+          error_description: 'Bad things happened.',
+        })
+      );
 
       let errorMessage;
 
       try {
-        await getIntegrationAccessToken({
-          scope: 'https://scope.com/s/'
-        }, {
-          privateKey: 'MyPrivateKey',
-          orgId: 'MyOrgId',
-          techAccountId: 'MyTechAccountId',
-          apiKey: 'MyApiKey',
-          clientSecret: 'MyClientSecret'
-        });
+        await getIntegrationAccessToken(
+          {
+            scope: 'https://scope.com/s/',
+          },
+          {
+            privateKey: 'MyPrivateKey',
+            orgId: 'MyOrgId',
+            techAccountId: 'MyTechAccountId',
+            apiKey: 'MyApiKey',
+            clientSecret: 'MyClientSecret',
+          }
+        );
       } catch (error) {
         errorMessage = error.message;
       }
 
-      expect(errorMessage).toBe('Error retrieving access token. Bad things happened.');
+      expect(errorMessage).toBe(
+        'Error retrieving access token. Bad things happened.'
+      );
     });
 
     it('attempts authenticating with each supported metascope', async () => {
-      mockAuth.and.returnValue(Promise.reject({
-        error: 'invalid_scope',
-        error_description: 'Invalid metascope.',
-      }));
+      mockAuth.and.returnValue(
+        Promise.reject({
+          error: 'invalid_scope',
+          error_description: 'Invalid metascope.',
+        })
+      );
 
       let errorMessage;
       try {
-        await getIntegrationAccessToken({
-          aud: 'https://aud.com/c/',
-          scope: 'https://scope.com/s/'
-        }, {
-          privateKey: 'MyPrivateKey',
-          orgId: 'MyOrgId',
-          techAccountId: 'MyTechAccountId',
-          apiKey: 'MyApiKey',
-          clientSecret: 'MyClientSecret'
-        });
+        await getIntegrationAccessToken(
+          {
+            ims: 'https://ims.com/c/',
+            scope: 'https://scope.com/s/',
+          },
+          {
+            privateKey: 'MyPrivateKey',
+            orgId: 'MyOrgId',
+            techAccountId: 'MyTechAccountId',
+            apiKey: 'MyApiKey',
+            clientSecret: 'MyClientSecret',
+          }
+        );
       } catch (error) {
         errorMessage = error.message;
       }
 
-      expect(mockAuth).toHaveBeenCalledWith(expectedAuthOptions({
-        metaScopes: [ 'https://scope.com/s/ent_reactor_extension_developer_sdk' ]
-      }));
+      expect(mockAuth).toHaveBeenCalledWith(
+        expectedAuthOptions({
+          metaScopes: [
+            'https://scope.com/s/ent_reactor_extension_developer_sdk',
+          ],
+        })
+      );
 
-      expect(mockAuth).toHaveBeenCalledWith(expectedAuthOptions({
-        metaScopes: [ 'https://scope.com/s/ent_reactor_admin_sdk' ]
-      }));
+      expect(mockAuth).toHaveBeenCalledWith(
+        expectedAuthOptions({
+          metaScopes: ['https://scope.com/s/ent_reactor_admin_sdk'],
+        })
+      );
       expect(mockAuth.calls.count()).toBe(METASCOPES.length);
       // This tests that if all metascopes fail, the error from the last attempt is ultimately thrown.
-      expect(errorMessage).toBe('Error retrieving access token. Invalid metascope.');
+      expect(errorMessage).toBe(
+        'Error retrieving access token. Invalid metascope.'
+      );
     });
   });
 });
