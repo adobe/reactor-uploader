@@ -111,7 +111,7 @@ module.exports = async (
     } catch (e) {
       if (e.error !== 'invalid_scope' || i === METASCOPES.length - 1) {
         throw new Error(
-          `Error retrieving access token. ${e.error_description}`
+          `Error retrieving access token. ${e.error_description || e}`
         );
       }
     }
