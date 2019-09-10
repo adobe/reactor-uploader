@@ -156,7 +156,7 @@ describe('getIntegrationAccessToken', () => {
       );
 
       expect(mockLogVerboseHeader).toHaveBeenCalledWith(
-        'Authenticating with metascope ent_reactor_extension_developer_sdk'
+        'Authenticating with metascope ent_reactor_sdk'
       );
       expect(mockAuth).toHaveBeenCalledWith(expectedAuthOptions());
       expect(accessToken).toBe('generatedAccessToken');
