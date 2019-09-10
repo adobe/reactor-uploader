@@ -239,7 +239,7 @@ describe('getIntegrationAccessToken', () => {
 
       expect(mockAuth).toHaveBeenCalledWith(
         expectedAuthOptions({
-          metaScopes: ['https://scope.com/s/ent_reactor_admin'],
+          metaScopes: ['https://scope.com/s/ent_reactor_admin_sdk'],
         })
       );
       expect(mockAuth.calls.count()).toBe(METASCOPES.length);
