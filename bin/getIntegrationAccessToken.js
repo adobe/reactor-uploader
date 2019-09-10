@@ -16,7 +16,9 @@ const logVerboseHeader = require('./logVerboseHeader');
 const auth = require('@adobe/jwt-auth');
 
 const METASCOPES = [
+  'ent_reactor_sdk',
   'ent_reactor_extension_developer_sdk',
+  'ent_reactor_admin',
   'ent_reactor_admin_sdk',
 ];
 
