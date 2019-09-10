@@ -17,8 +17,8 @@ const auth = require('@adobe/jwt-auth');
 
 const METASCOPES = [
   'ent_reactor_sdk',
+  // The below metascopes are necessary to maintain for integrations created before Sep 9, 2019
   'ent_reactor_extension_developer_sdk',
-  'ent_reactor_admin',
   'ent_reactor_admin_sdk',
 ];
 
