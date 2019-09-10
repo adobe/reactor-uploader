@@ -13,7 +13,9 @@
 const proxyquire = require('proxyquire');
 
 const METASCOPES = [
+  'ent_reactor_sdk',
   'ent_reactor_extension_developer_sdk',
+  'ent_reactor_admin',
   'ent_reactor_admin_sdk',
 ];
 
@@ -62,7 +64,7 @@ describe('getIntegrationAccessToken', () => {
           orgId: 'MyOrgId',
           privateKey: 'privateKey',
           metaScopes: [
-            'https://scope.com/s/ent_reactor_extension_developer_sdk',
+            'https://scope.com/s/ent_reactor_sdk',
           ],
           ims: 'https://ims.com/c/',
         },
@@ -222,14 +224,14 @@ describe('getIntegrationAccessToken', () => {
       expect(mockAuth).toHaveBeenCalledWith(
         expectedAuthOptions({
           metaScopes: [
-            'https://scope.com/s/ent_reactor_extension_developer_sdk',
+            'https://scope.com/s/ent_reactor_sdk',
           ],
         })
       );
 
       expect(mockAuth).toHaveBeenCalledWith(
         expectedAuthOptions({
-          metaScopes: ['https://scope.com/s/ent_reactor_admin_sdk'],
+          metaScopes: ['https://scope.com/s/ent_reactor_admin'],
         })
       );
       expect(mockAuth.calls.count()).toBe(METASCOPES.length);
