@@ -61,7 +61,7 @@ Your technical account ID. You can find this on the overview screen for the inte
 
 ##### --api-key (for authentication using an Adobe I/O integration)
 
-Your API key. You can find this on the overview screen for the integration you have created within the [Adobe I/O console](https://console.adobe.io).
+Your API key/Client ID. You can find this on the overview screen for the integration you have created within the [Adobe I/O console](https://console.adobe.io).
 
 ##### --client-secret (for authentication using an Adobe I/O integration)
 
