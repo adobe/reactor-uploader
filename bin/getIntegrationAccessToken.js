@@ -67,7 +67,7 @@ module.exports = async (
       {
         type: 'input',
         name: 'apiKey',
-        message: 'What is your API key?',
+        message: 'What is your API key/Client ID?',
         validate: Boolean,
       },
     ]));
