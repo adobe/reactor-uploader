@@ -241,7 +241,6 @@ describe('getIntegrationAccessToken', () => {
       // we bailed after the first call because it wasn't a scoping error
       expect(mockAuth.calls.count()).toBe(1)
 
-      // This tests that if all metascopes fail, the error from the last attempt is ultimately thrown.
       expect(errorMessage).toBe(
         `Error retrieving access token. ${mockedAuthError}`
       );

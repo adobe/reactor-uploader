@@ -109,7 +109,7 @@ module.exports = async (
 
       return response.access_token;
     } catch (e) {
-      const { message: errorMessage = '' } = e;
+      const { message: errorMessage = 'An unknown authentication error occurred.' } = e;
       const isScopeError = errorMessage.toLowerCase().indexOf('invalid_scope') !== -1;
       const hasCheckedFinalScope = i === METASCOPES.length - 1;
 
