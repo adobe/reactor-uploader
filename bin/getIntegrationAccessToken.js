@@ -109,9 +109,14 @@ module.exports = async (
 
       return response.access_token;
     } catch (e) {
-      if (e.error !== 'invalid_scope' || i === METASCOPES.length - 1) {
+      const { message: errorMessage = '' } = e;
+      const isScopeError = errorMessage.toLowerCase().indexOf('invalid_scope') !== -1;
+      const hasCheckedFinalScope = i === METASCOPES.length - 1;
+
+      // throw immediately if we've encountered any error that isn't a scope error
+      if (!isScopeError || hasCheckedFinalScope) {
         throw new Error(
-          `Error retrieving access token. ${e.error_description || e}`
+          `Error retrieving access token. ${errorMessage}`
         );
       }
     }

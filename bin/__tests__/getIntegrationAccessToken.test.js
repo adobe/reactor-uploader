@@ -165,11 +165,9 @@ describe('getIntegrationAccessToken', () => {
     });
 
     it('reports error retrieving access token', async () => {
+      const mockedAuthError = 'some error: Bad things happened.'
       mockAuth.and.returnValue(
-        Promise.reject({
-          error: 'some error',
-          error_description: 'Bad things happened.',
-        })
+        Promise.reject(new Error(mockedAuthError))
       );
 
       let errorMessage;
@@ -185,17 +183,18 @@ describe('getIntegrationAccessToken', () => {
         errorMessage = error.message;
       }
 
+      // we bailed after the first call because it wasn't a scoping error
+      expect(mockAuth.calls.count()).toBe(1)
+
       expect(errorMessage).toBe(
-        'Error retrieving access token. Bad things happened.'
+        `Error retrieving access token. ${mockedAuthError}`
       );
     });
 
     it('attempts authenticating with each supported metascope', async () => {
+      const mockedAuthError = 'invalid_scope: Invalid metascope.';
       mockAuth.and.returnValue(
-        Promise.reject({
-          error: 'invalid_scope',
-          error_description: 'Invalid metascope.',
-        })
+        Promise.reject(new Error(mockedAuthError))
       );
 
       let errorMessage;
@@ -218,15 +217,19 @@ describe('getIntegrationAccessToken', () => {
           metaScopes: ['https://scope.com/s/ent_reactor_admin_sdk'],
         })
       );
+
       expect(mockAuth.calls.count()).toBe(METASCOPES.length);
       // This tests that if all metascopes fail, the error from the last attempt is ultimately thrown.
       expect(errorMessage).toBe(
-        'Error retrieving access token. Invalid metascope.'
+        `Error retrieving access token. ${mockedAuthError}`
       );
     });
 
     it('shows JS error details in case they happen', async () => {
-      mockAuth.and.returnValue(Promise.reject(new Error('some error')));
+      const mockedAuthError = 'some error';
+      mockAuth.and.returnValue(
+        Promise.reject(new Error(mockedAuthError))
+      );
 
       let errorMessage;
       try {
@@ -235,17 +238,12 @@ describe('getIntegrationAccessToken', () => {
         errorMessage = error.message;
       }
 
-      expect(mockAuth).toHaveBeenCalledWith(
-        expectedAuthOptions({
-          metaScopes: [
-            'https://scope.com/s/ent_reactor_extension_developer_sdk',
-          ],
-        })
-      );
+      // we bailed after the first call because it wasn't a scoping error
+      expect(mockAuth.calls.count()).toBe(1)
 
       // This tests that if all metascopes fail, the error from the last attempt is ultimately thrown.
       expect(errorMessage).toBe(
-        'Error retrieving access token. Error: some error'
+        `Error retrieving access token. ${mockedAuthError}`
       );
     });
   });
