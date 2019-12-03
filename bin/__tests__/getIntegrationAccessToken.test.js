@@ -255,5 +255,32 @@ describe('getIntegrationAccessToken', () => {
         `Error retrieving access token. ${mockedAuthError}`
       );
     });
+
+    it('contains a fallback message for authentication errors', async () => {
+      // don't supply a message during auth failure
+      mockAuth.and.returnValue(Promise.reject(new Error()));
+
+      let errorMessage;
+      try {
+        await getIntegrationAccessToken(
+          {
+            scope: 'https://scope.com/s/'
+          },
+          {
+            privateKey: 'MyPrivateKey',
+            orgId: 'MyOrgId',
+            techAccountId: 'MyTechAccountId',
+            apiKey: 'MyApiKey',
+            clientSecret: 'MyClientSecret'
+          }
+        );
+      } catch (error) {
+        errorMessage = error.message;
+      }
+
+      expect(errorMessage).toBe(
+        'Error retrieving access token. An unknown authentication error occurred.'
+      );
+    });
   });
 });
