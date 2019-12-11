@@ -35,7 +35,7 @@ describe('getExtensionPackageFromServer', () => {
       'page[number]': 1,
       'filter[name]': 'EQ fake-extension',
       'filter[platform]': 'EQ web',
-      'filter[status]': 'EQ succeeded, EQ failed'
+      'filter[status]': 'EQ succeeded,EQ failed'
     },
     headers: getReactorHeaders('fake-token'),
     transform: JSON.parse
