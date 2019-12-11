@@ -29,7 +29,7 @@ module.exports = async (
       'page[number]': 1,
       'filter[name]': `EQ ${extensionPackageManifest.name}`,
       'filter[platform]': `EQ ${extensionPackageManifest.platform}`,
-      'filter[status]': 'EQ succeeded, EQ failed'
+      'filter[status]': 'EQ succeeded,EQ failed'
     },
     headers: getReactorHeaders(accessToken),
     transform: JSON.parse
