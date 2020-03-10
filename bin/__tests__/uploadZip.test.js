@@ -70,7 +70,7 @@ describe('uploadZip', () => {
       },
       transform: JSON.parse
     });
-    expect(console.log).toHaveBeenCalledWith(`No extension package was found on the server with the ` +
+    expect(console.log).toHaveBeenCalledWith(`No development extension package was found on the server with the ` +
       `name ${chalk.bold('fake-extension')}. A new extension package will be created.`);
     expect(console.log).toHaveBeenCalledWith(`The extension package has been assigned the ` +
       `ID ${chalk.bold('EP123')}.`);
@@ -104,42 +104,9 @@ describe('uploadZip', () => {
       },
       transform: JSON.parse
     });
-    expect(console.log).toHaveBeenCalledWith(`An existing extension package with the name ` +
+    expect(console.log).toHaveBeenCalledWith(`An existing development extension package with the name ` +
       `${chalk.bold('fake-extension')} was found on the server and will be updated. ` +
       `The extension package ID is ${chalk.bold('EP123')}.`);
-    expect(extensionPackageId).toBe('EP123');
-  });
-
-  it('uploads a zip for an existing extension package with non-development availability', async () => {
-    const extensionPackageId = await uploadZip(
-      {
-        extensionPackages: 'https://extensionpackages.com',
-      },
-      'generatedAccessToken',
-      extensionPackageManifest,
-      {
-        id: 'EP123',
-        attributes: {
-          availability: 'private'
-        }
-      },
-      '/extension.zip',
-      {}
-    );
-
-    expect(mockFs.createReadStream).toHaveBeenCalledWith('/extension.zip');
-    expect(mockRequest).toHaveBeenCalledWith({
-      method: 'POST',
-      url: 'https://extensionpackages.com',
-      headers: getReactorHeaders('generatedAccessToken'),
-      formData: {
-        package: mockReadStream
-      },
-      transform: JSON.parse
-    });
-    expect(console.log).toHaveBeenCalledWith(`An existing extension package with the name ` +
-      `${chalk.bold('fake-extension')} was found on the server, but because its availability is not ` +
-      `${chalk.bold('development')}, a development version of the extension package will be created.`);
     expect(extensionPackageId).toBe('EP123');
   });
 

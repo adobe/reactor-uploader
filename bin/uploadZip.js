@@ -17,7 +17,7 @@ const getReactorHeaders = require('./getReactorHeaders');
 const handleResponseError = require('./handleResponseError');
 const logVerboseHeader = require('./logVerboseHeader');
 
-module.exports = async (
+module.exports = async(
   envConfig,
   accessToken,
   extensionPackageManifest,
@@ -25,21 +25,14 @@ module.exports = async (
   zipPath,
   argv
 ) => {
-  const shouldPost = !extensionPackageFromServer || extensionPackageFromServer.attributes.availability !== 'development';
+  const shouldPost = !extensionPackageFromServer;
 
   if (extensionPackageFromServer) {
-    if (extensionPackageFromServer.attributes.availability === 'development') {
-      console.log(`An existing extension package with the name ` +
-        `${chalk.bold(extensionPackageManifest.name)} was found on the server and will be updated. ` +
-        `The extension package ID is ${chalk.bold(extensionPackageFromServer.id)}.`);
-    } else {
-      console.log(`An existing extension package with the name ` +
-        `${chalk.bold(extensionPackageManifest.name)} was found on the server, but because its ` +
-        `availability is not ${chalk.bold('development')}, a development version of the extension package ` +
-        `will be created.`);
-    }
+    console.log(`An existing development extension package with the name ` +
+      `${chalk.bold(extensionPackageManifest.name)} was found on the server and will be updated. ` +
+      `The extension package ID is ${chalk.bold(extensionPackageFromServer.id)}.`);
   } else {
-    console.log(`No extension package was found on the server with the ` +
+    console.log(`No development extension package was found on the server with the ` +
       `name ${chalk.bold(extensionPackageManifest.name)}. A new extension package will be created.`);
   }
 
@@ -50,8 +43,7 @@ module.exports = async (
   const options = {
     method: shouldPost ? 'POST' : 'PATCH',
     url: shouldPost ?
-      envConfig.extensionPackages :
-      `${envConfig.extensionPackages}/${extensionPackageFromServer.id}`,
+      envConfig.extensionPackages : `${envConfig.extensionPackages}/${extensionPackageFromServer.id}`,
     headers: getReactorHeaders(accessToken),
     formData: {
       package: fs.createReadStream(zipPath)
