@@ -11,11 +11,7 @@ For more information about developing an extension for Launch, please visit our 
 
 ## Usage
 
-Before running the uploader tool, you must first have [Node.js](https://nodejs.org/en/) installed on your computer. Your npm version (npm comes bundled with Node.js) will need to be at least 5.2.0. You can check the installed version by running the following command from a command line:
-
-```
-npm -v
-```
+Before running the uploader tool, you must first have [Node.js](https://nodejs.org/en/) installed on your computer.
 
 You will also need to have already created a zip file containing your extension package. The [@adobe/reactor-packager](https://www.npmjs.com/package/@adobe/reactor-packager) tool can be used to create such a zip file.
 

@@ -25,21 +25,24 @@
   },
   "dependencies": {
     "@adobe/jwt-auth": "^0.3.0",
-    "chalk": "^2.4.2",
+    "chalk": "^4.1.0",
     "delay": "^4.2.0",
-    "inquirer": "^6.3.1",
-    "ora": "^3.4.0",
+    "inquirer": "^7.3.2",
+    "ora": "^4.0.4",
     "prettyjson": "^1.2.1",
     "request": "^2.88.0",
     "request-debug": "^0.2.0",
     "request-promise-native": "^1.0.7",
-    "yargs": "^13.2.2",
+    "yargs": "^15.4.1",
     "yauzl": "^2.10.0"
   },
   "devDependencies": {
     "jasmine": "^3.4.0",
     "jasmine-expect": "^4.0.1",
-    "nodemon": "^1.19.0",
+    "nodemon": "^2.0.4",
     "proxyquire": "^2.1.0"
+  },
+  "engines": {
+    "node": ">=10.0.0"
   }
 }
