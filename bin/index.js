@@ -11,8 +11,9 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  ****************************************************************************************/
-
-const argv = require('yargs')
+const {hideBin} = require('yargs/helpers');
+const argv = require('yargs/yargs')(hideBin(process.argv))
+  .scriptName('@adobe/reactor-uploader')
   .usage('Usage: $0 <zipPath> [options]')
   .command('zipPath', 'The local path to the extension package zip file you wish to upload.')
   .options({

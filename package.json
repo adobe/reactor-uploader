@@ -24,22 +24,22 @@
     "test:watch": "nodemon --exec jasmine JASMINE_CONFIG_PATH=jasmine.json"
   },
   "dependencies": {
-    "@adobe/jwt-auth": "^0.3.0",
+    "@adobe/jwt-auth": "^0.3.3",
     "chalk": "^4.1.0",
-    "delay": "^4.2.0",
-    "inquirer": "^7.3.2",
-    "ora": "^4.0.4",
+    "delay": "^4.4.0",
+    "inquirer": "^7.3.3",
+    "ora": "^5.3.0",
     "prettyjson": "^1.2.1",
     "request": "^2.88.0",
     "request-debug": "^0.2.0",
     "request-promise-native": "^1.0.7",
-    "yargs": "^15.4.1",
+    "yargs": "^16.2.0",
     "yauzl": "^2.10.0"
   },
   "devDependencies": {
-    "jasmine": "^3.4.0",
-    "jasmine-expect": "^4.0.1",
-    "nodemon": "^2.0.4",
+    "jasmine": "^3.6.4",
+    "jasmine-expect": "^5.0.0",
+    "nodemon": "^2.0.7",
     "proxyquire": "^2.1.0"
   },
   "engines": {
