@@ -1,6 +1,6 @@
 {
   "name": "@adobe/reactor-uploader",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "Command line tool for uploading Launch extensions.",
   "author": {
     "name": "Adobe Systems",
@@ -17,7 +17,7 @@
     "extension"
   ],
   "bin": {
-    "reactor-uploader": "./bin/index.js"
+    "reactor-uploader": "bin/index.js"
   },
   "scripts": {
     "test": "jasmine JASMINE_CONFIG_PATH=jasmine.json",
