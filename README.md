@@ -7,7 +7,7 @@ Launch, by Adobe, is a next-generation tag management solution enabling simplifi
 
 The uploader tool allows extension developers to easily upload their Launch extension to the Launch extension marketplace. It can be used for uploading brand new extension packages or new versions of existing extension packages.
 
-For more information about developing an extension for Launch, please visit our [extension development guide](https://developer.adobelaunch.com/extensions/).
+For more information about developing an extension for Launch, please visit our [extension development guide](https://experienceleague.adobe.com/docs/launch/using/extension-dev/overview.html#extension-dev).
 
 ## Usage
 
