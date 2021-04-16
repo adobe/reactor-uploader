@@ -64,7 +64,14 @@ const checkOldProductionEnvironmentVariables = require('./checkOldProductionEnvi
 (async () => {
   try {
     if (argv.verbose) {
-      require('request-debug')(require('request-promise-native'));
+      require('request-debug')(require('request-promise-native'), function(type, data, r) {
+        const filteredData = { ...data };
+        if (filteredData.headers?.Authorization) {
+          filteredData.headers.Authorization = 'Bearer [USER_ACCESS_TOKEN]'
+        }
+        console.error({ [type]: filteredData })
+        return r;
+      });
     }
 
     const environment = getEnvironment(argv);
