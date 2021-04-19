@@ -66,7 +66,7 @@ const checkOldProductionEnvironmentVariables = require('./checkOldProductionEnvi
     if (argv.verbose) {
       require('request-debug')(require('request-promise-native'), function(type, data, r) {
         const filteredData = { ...data };
-        if (filteredData.headers?.Authorization) {
+        if (filteredData.headers && filteredData.headers.Authorization) {
           filteredData.headers.Authorization = 'Bearer [USER_ACCESS_TOKEN]'
         }
         console.error({ [type]: filteredData })
@@ -108,6 +108,7 @@ const checkOldProductionEnvironmentVariables = require('./checkOldProductionEnvi
     }
 
     console.log(chalk.bold.red(error.message));
+    console.log(chalk.bold.red('run in --verbose mode for more info'));
     process.exitCode = 1;
   }
 })();
