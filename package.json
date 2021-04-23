@@ -24,7 +24,7 @@
     "test:watch": "nodemon --exec jasmine JASMINE_CONFIG_PATH=jasmine.json"
   },
   "dependencies": {
-    "@adobe/jwt-auth": "^0.3.3",
+    "@adobe/jwt-auth": "^1.0.0",
     "chalk": "^4.1.0",
     "delay": "^4.4.0",
     "inquirer": "^7.3.3",
