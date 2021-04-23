@@ -103,12 +103,13 @@ const checkOldProductionEnvironmentVariables = require('./checkOldProductionEnvi
       argv
     );
   } catch (error) {
-    if (argv.verbose) {
+    if (argv.verbose || !error.code) {
+      console.log(chalk.bold.red('--verbose output:'))
       throw error;
     }
 
     console.log(chalk.bold.red(error.message));
-    console.log(chalk.bold.red('run in --verbose mode for more info'));
+    console.log(chalk.bold.red('run in --verbose mode for full stack trace'));
     process.exitCode = 1;
   }
 })();

@@ -111,15 +111,29 @@ module.exports = async (
 
       return response.access_token;
     } catch (e) {
+      // an unexpected error in jwt-auth
+      if (!e.code || (verbose && 'request_failed' === e.code)) {
+        throw e;
+      }
+
       const errorMessage = e.message || 'An unknown authentication error occurred.';
-      const isScopeError = errorMessage.toLowerCase().indexOf('invalid_scope') !== -1;
+      const isScopeError = 'invalid_scope' === e.code;
       const hasCheckedFinalScope = i === METASCOPES.length - 1;
 
       // throw immediately if we've encountered any error that isn't a scope error
       if (!isScopeError || hasCheckedFinalScope) {
-        throw new Error(
-          `Error retrieving access token. ${errorMessage}`
+        let preAmble = 'Error retrieving your Access Token:';
+        const message = `Error Message: ${errorMessage}`;
+        const code = `Error Code: ${e.code}`;
+        if ('request_failed' === e.code) {
+          preAmble += ' This is likely an error within jwt-auth or the IMS token exchange service';
+        }
+
+        let preparedError = new Error(
+          [preAmble, message, code].join('\n')
         );
+        preparedError.code = e.code;
+        throw preparedError;
       }
     }
   }
