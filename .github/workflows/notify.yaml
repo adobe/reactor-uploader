@@ -19,8 +19,6 @@ jobs:
           repository: "${{ github.repository }}"  # The repository to scan.
           releases-only: true  # We know that all relevant tags have a GitHub release for them.
         id: repoTag  # The step ID to refer to later.
-      - name: Show ENV
-        run: env
       - name: Notify Slack of Release
         uses: tokorom/action-slack-incoming-webhook@main
         env:
