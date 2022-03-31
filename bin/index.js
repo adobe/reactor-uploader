@@ -12,6 +12,7 @@
  * governing permissions and limitations under the License.
  ****************************************************************************************/
 const {hideBin} = require('yargs/helpers');
+const {setVerbose: setIsFetchVerbose} = require('./fetchWrapper');
 const argv = require('yargs/yargs')(hideBin(process.argv))
   .scriptName('@adobe/reactor-uploader')
   .usage('Usage: $0 <zipPath> [options]')
@@ -63,17 +64,7 @@ const checkOldProductionEnvironmentVariables = require('./checkOldProductionEnvi
 
 (async () => {
   try {
-    if (argv.verbose) {
-      require('request-debug')(require('request-promise-native'), function(type, data, r) {
-        const filteredData = { ...data };
-        if (filteredData.headers && filteredData.headers.Authorization) {
-          filteredData.headers.Authorization = 'Bearer [USER_ACCESS_TOKEN]'
-        }
-        console.error({ [type]: filteredData })
-        return r;
-      });
-    }
-
+    setIsFetchVerbose(argv.verbose);
     const environment = getEnvironment(argv);
     const envSpecificConfig = envConfig[environment];
 

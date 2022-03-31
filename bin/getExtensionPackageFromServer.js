@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  ****************************************************************************************/
 
-const request = require('request-promise-native');
+const { fetch } = require('./fetchWrapper');
 const getReactorHeaders = require('./getReactorHeaders');
 const handleResponseError = require('./handleResponseError');
 const logVerboseHeader = require('./logVerboseHeader');
@@ -21,20 +21,6 @@ module.exports = async (
   extensionPackageManifest,
   argv
 ) => {
-  const options = {
-    method: 'GET',
-    url: `${envConfig.extensionPackages}`,
-    qs: {
-      'page[size]': 1,
-      'page[number]': 1,
-      'filter[name]': `EQ ${extensionPackageManifest.name}`,
-      'filter[platform]': `EQ ${extensionPackageManifest.platform}`,
-      'filter[availability]': 'EQ development'
-    },
-    headers: getReactorHeaders(accessToken),
-    transform: JSON.parse
-  };
-
   if (argv.verbose) {
     logVerboseHeader('Retrieving extension package from server');
   }
@@ -42,7 +28,19 @@ module.exports = async (
   let body;
 
   try {
-    body = await request(options);
+    const url = new URL(envConfig.extensionPackages);
+    url.search = new URLSearchParams({
+      'page[size]': '1',
+      'page[number]': '1',
+      'filter[name]': `EQ ${extensionPackageManifest.name}`,
+      'filter[platform]': `EQ ${extensionPackageManifest.platform}`,
+      'filter[availability]': 'EQ development'
+    }).toString();
+    const response = await fetch(url.toString(), {
+      method: 'GET',
+      headers: getReactorHeaders(accessToken)
+    });
+    body = await response.json();
   } catch (error) {
     handleResponseError(error, 'Error detecting whether extension package exists on server.');
   }

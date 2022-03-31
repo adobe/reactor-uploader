@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  ****************************************************************************************/
 
-const request = require('request-promise-native');
+const { fetch } = require('./fetchWrapper');
 const delay = require('delay');
 const ora = require('ora');
 const getReactorHeaders = require('./getReactorHeaders');
@@ -36,17 +36,14 @@ const requestStatus = async (
     logVerboseHeader('Checking extension package status');
   }
 
-  const options = {
-    method: 'GET',
-    url: `${envConfig.extensionPackages}/${extensionPackageId}`,
-    headers: getReactorHeaders(accessToken),
-    transform: JSON.parse
-  };
-
   let body;
 
   try {
-    body = await request(options);
+    const response = await fetch(`${envConfig.extensionPackages}/${extensionPackageId}`, {
+      method: 'GET',
+      headers: getReactorHeaders(accessToken)
+    });
+    body = await response.json();
   } catch (error) {
     spinner.stop();
     handleResponseError(error, 'Error requesting extension package processing status.');

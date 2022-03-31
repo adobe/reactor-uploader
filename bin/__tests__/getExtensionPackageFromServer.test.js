@@ -22,31 +22,40 @@ describe('getExtensionPackageFromServer', () => {
     name: 'fake-extension',
     platform: 'web'
   };
-  let mockRequest;
+  let mockFetch;
+  let mockFetchJsonHandler;
   let mockHandleResponseError;
   let mockLogVerboseHeader;
   let getExtensionPackageFromServer;
 
+  const _constructedURL = new URL('https://extensionpackages');
+  _constructedURL.search = new URLSearchParams({
+    'page[size]': 1,
+    'page[number]': 1,
+    'filter[name]': 'EQ fake-extension',
+    'filter[platform]': 'EQ web',
+    'filter[availability]': 'EQ development'
+  }).toString();
+
+  const expectedURL = _constructedURL.toString();
   const expectedRequestOptions = {
     method: 'GET',
-    url: 'https://extensionpackages',
-    qs: {
-      'page[size]': 1,
-      'page[number]': 1,
-      'filter[name]': 'EQ fake-extension',
-      'filter[platform]': 'EQ web',
-      'filter[availability]': 'EQ development'
-    },
-    headers: getReactorHeaders('fake-token'),
-    transform: JSON.parse
+    headers: getReactorHeaders('fake-token')
   };
 
   beforeEach(() => {
-    mockRequest = jasmine.createSpy();
+    mockFetch = jasmine.createSpy();
+    mockFetchJsonHandler = jasmine.createSpy();
     mockHandleResponseError = jasmine.createSpy().and.throwError();
     mockLogVerboseHeader = jasmine.createSpy();
     getExtensionPackageFromServer = proxyquire('../getExtensionPackageFromServer', {
-      'request-promise-native': mockRequest,
+      './fetchWrapper': {
+        fetch: mockFetch.and.returnValue(
+          Promise.resolve({
+            json: mockFetchJsonHandler
+          })
+        )
+      },
       './handleResponseError': mockHandleResponseError,
       './logVerboseHeader': mockLogVerboseHeader
     });
@@ -54,7 +63,7 @@ describe('getExtensionPackageFromServer', () => {
   });
 
   it('returns ID from existing extension package', async () => {
-    mockRequest.and.returnValue({
+    mockFetchJsonHandler.and.returnValue({
       data: [
         {
           id: 'EP123'
@@ -64,30 +73,30 @@ describe('getExtensionPackageFromServer', () => {
 
     const result = await getExtensionPackageFromServer(envConfig, accessToken, extensionPackageManifest, {});
 
-    expect(mockRequest).toHaveBeenCalledWith(expectedRequestOptions);
+    expect(mockFetch).toHaveBeenCalledWith(expectedURL, expectedRequestOptions);
     expect(result.id).toBe('EP123');
   });
 
   it('returns null if no extension package found', async () => {
-    mockRequest.and.returnValue({
+    mockFetchJsonHandler.and.returnValue({
       data: []
     });
 
     const result = await getExtensionPackageFromServer(envConfig, accessToken, extensionPackageManifest, {});
 
-    expect(mockRequest).toHaveBeenCalledWith(expectedRequestOptions);
+    expect(mockFetch).toHaveBeenCalledWith(expectedURL, expectedRequestOptions);
     expect(result).toBeNull();
   });
 
   it('calls handleResponseError on response error', async () => {
     const error = new Error();
-    mockRequest.and.throwError(error);
+    mockFetchJsonHandler.and.throwError(error);
 
     try {
       await getExtensionPackageFromServer(envConfig, accessToken, extensionPackageManifest, {});
     } catch (e) {}
 
-    expect(mockRequest).toHaveBeenCalledWith(expectedRequestOptions);
+    expect(mockFetch).toHaveBeenCalledWith(expectedURL, expectedRequestOptions);
     expect(mockHandleResponseError).toHaveBeenCalledWith(error, jasmine.any(String));
   });
 
