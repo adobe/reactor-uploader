@@ -15,7 +15,7 @@ const chalk = require('chalk');
 const getReactorHeaders = require('../getReactorHeaders');
 
 describe('uploadZip', () => {
-  let mockRequest;
+  let mockFetch;
   let mockFs;
   let mockReadStream;
   let mockHandleResponseError;
@@ -28,11 +28,7 @@ describe('uploadZip', () => {
   };
 
   beforeEach(() => {
-    mockRequest = jasmine.createSpy().and.returnValue({
-      data: {
-        id: 'EP123'
-      }
-    });
+    mockFetch = jasmine.createSpy();
     mockReadStream = {};
     mockFs = {
       createReadStream: jasmine.createSpy().and.returnValue(mockReadStream)
@@ -42,7 +38,19 @@ describe('uploadZip', () => {
     spyOn(console, 'log');
     uploadZip = proxyquire('../uploadZip', {
       fs: mockFs,
-      'request-promise-native': mockRequest,
+      './fetchWrapper': {
+        fetch: mockFetch.and.returnValue(
+          Promise.resolve({
+            json: jasmine.createSpy().and.returnValue(
+              Promise.resolve({
+                data: {
+                  id: 'EP123'
+                }
+              })
+            )
+          })
+        )
+      },
       './handleResponseError': mockHandleResponseError,
       './logVerboseHeader': mockLogVerboseHeader
     });
@@ -61,14 +69,12 @@ describe('uploadZip', () => {
     );
 
     expect(mockFs.createReadStream).toHaveBeenCalledWith('/extension.zip');
-    expect(mockRequest).toHaveBeenCalledWith({
+    expect(mockFetch).toHaveBeenCalledWith('https://extensionpackages.com', {
       method: 'POST',
-      url: 'https://extensionpackages.com',
       headers: getReactorHeaders('generatedAccessToken'),
       formData: {
         package: mockReadStream
-      },
-      transform: JSON.parse
+      }
     });
     expect(console.log).toHaveBeenCalledWith(`No development extension package was found on the server with the ` +
       `name ${chalk.bold('fake-extension')}. A new extension package will be created.`);
@@ -95,14 +101,12 @@ describe('uploadZip', () => {
     );
 
     expect(mockFs.createReadStream).toHaveBeenCalledWith('/extension.zip');
-    expect(mockRequest).toHaveBeenCalledWith({
+    expect(mockFetch).toHaveBeenCalledWith('https://extensionpackages.com/EP123', {
       method: 'PATCH',
-      url: 'https://extensionpackages.com/EP123',
       headers: getReactorHeaders('generatedAccessToken'),
       formData: {
         package: mockReadStream
-      },
-      transform: JSON.parse
+      }
     });
     expect(console.log).toHaveBeenCalledWith(`An existing development extension package with the name ` +
       `${chalk.bold('fake-extension')} was found on the server and will be updated. ` +
@@ -112,7 +116,7 @@ describe('uploadZip', () => {
 
   it('calls handleResponseError on response error', async () => {
     const error = new Error();
-    mockRequest.and.throwError(error);
+    mockFetch.and.throwError(error);
 
     try {
       await uploadZip(

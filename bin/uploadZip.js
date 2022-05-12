@@ -12,7 +12,7 @@
 
 const fs = require('fs');
 const chalk = require('chalk');
-const request = require('request-promise-native');
+const { fetch } = require('./fetchWrapper');
 const getReactorHeaders = require('./getReactorHeaders');
 const handleResponseError = require('./handleResponseError');
 const logVerboseHeader = require('./logVerboseHeader');
@@ -42,17 +42,18 @@ module.exports = async(
 
   const options = {
     method: shouldPost ? 'POST' : 'PATCH',
-    url: shouldPost ?
-      envConfig.extensionPackages : `${envConfig.extensionPackages}/${extensionPackageFromServer.id}`,
     headers: getReactorHeaders(accessToken),
     formData: {
       package: fs.createReadStream(zipPath)
-    },
-    transform: JSON.parse
+    }
   };
 
   try {
-    const body = await request(options);
+    const url = shouldPost
+      ? envConfig.extensionPackages
+      : `${envConfig.extensionPackages}/${extensionPackageFromServer.id}`;
+    const response = await fetch(url, options);
+    const body = await response.json();
     const extensionPackageId = body.data.id;
 
     if (shouldPost) {

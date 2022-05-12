@@ -21,24 +21,31 @@ describe('monitorStatus', () => {
   };
   const accessToken = 'fake-token';
   const extensionPackageId = 'EP123';
-  let mockRequest;
+  let mockFetch;
+  let mockFetchJsonHandler;
   let mockLogVerboseHeader;
   let monitorStatus;
   let spinner;
 
+  const expectedURL = 'https://extensionpackages/EP123';
   const expectedRequestOptions = {
     method: 'GET',
-    url: 'https://extensionpackages/EP123',
-    headers: getReactorHeaders('fake-token'),
-    transform: JSON.parse
+    headers: getReactorHeaders('fake-token')
   };
 
   beforeEach(() => {
-    mockRequest = jasmine.createSpy();
+    mockFetch = jasmine.createSpy();
+    mockFetchJsonHandler = jasmine.createSpy();
     mockLogVerboseHeader = jasmine.createSpy();
     const mockHandleResponseError = jasmine.createSpy().and.throwError();
     monitorStatus = proxyquire('../monitorStatus', {
-      'request-promise-native': mockRequest,
+      './fetchWrapper': {
+        fetch: mockFetch.and.returnValue(
+          Promise.resolve({
+            json: mockFetchJsonHandler
+          })
+        )
+      },
       'ora': () => {
         spinner = jasmine.createSpyObj('spinner', ['start', 'stop', 'succeed']);
         return spinner;
@@ -50,7 +57,7 @@ describe('monitorStatus', () => {
   });
 
   it('reports a successful extension package', async () => {
-    mockRequest.and.returnValue({
+    mockFetchJsonHandler.and.returnValue({
       data: {
         attributes: {
           status: 'succeeded'
@@ -60,13 +67,13 @@ describe('monitorStatus', () => {
 
     await monitorStatus(envConfig, accessToken, extensionPackageId, {});
 
-    expect(mockRequest).toHaveBeenCalledWith(expectedRequestOptions);
+    expect(mockFetch).toHaveBeenCalledWith(expectedURL, expectedRequestOptions);
     expect(spinner.start).toHaveBeenCalled();
     expect(spinner.succeed).toHaveBeenCalled();
   });
 
   it('continues monitoring a pending extension package up to 50 requests', async () => {
-    mockRequest.and.returnValue({
+    mockFetchJsonHandler.and.returnValue({
       data: {
         attributes: {
           status: 'pending'
@@ -82,15 +89,15 @@ describe('monitorStatus', () => {
       errorMessage = error.message;
     }
 
-    expect(mockRequest).toHaveBeenCalledWith(expectedRequestOptions);
+    expect(mockFetch).toHaveBeenCalledWith(expectedURL, expectedRequestOptions);
     expect(spinner.start).toHaveBeenCalled();
     expect(spinner.succeed).not.toHaveBeenCalled();
     expect(errorMessage).toBe('The extension package failed to be processed within the expected timeframe.');
-    expect(mockRequest.calls.count()).toBe(50);
+    expect(mockFetch.calls.count()).toBe(50);
   });
 
   it('reports a failed extension package', async () => {
-    mockRequest.and.returnValue({
+    mockFetchJsonHandler.and.returnValue(Promise.resolve({
       data: {
         attributes: {
           status: 'failed'
@@ -106,7 +113,7 @@ describe('monitorStatus', () => {
           }
         }
       }
-    });
+    }));
 
     let errorMessage;
 
@@ -116,7 +123,7 @@ describe('monitorStatus', () => {
       errorMessage = error.message;
     }
 
-    expect(mockRequest).toHaveBeenCalledWith(expectedRequestOptions);
+    expect(mockFetch).toHaveBeenCalledWith(expectedURL, expectedRequestOptions);
     expect(spinner.start).toHaveBeenCalled();
     expect(spinner.stop).toHaveBeenCalled();
     expect(errorMessage).toBe(`Extension package processing failed. ` +
