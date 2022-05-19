@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  ****************************************************************************************/
 
-const { fetch } = require('./fetchWrapper');
+const fetchWrapper = require('./fetchWrapper');
 const getReactorHeaders = require('./getReactorHeaders');
 const handleResponseError = require('./handleResponseError');
 const logVerboseHeader = require('./logVerboseHeader');
@@ -36,7 +36,7 @@ module.exports = async (
       'filter[platform]': `EQ ${extensionPackageManifest.platform}`,
       'filter[availability]': 'EQ development'
     }).toString();
-    const response = await fetch(url.toString(), {
+    const response = await fetchWrapper.fetch(url.toString(), {
       method: 'GET',
       headers: getReactorHeaders(accessToken)
     });

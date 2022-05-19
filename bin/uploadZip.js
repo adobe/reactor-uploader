@@ -10,12 +10,18 @@
  * governing permissions and limitations under the License.
  ****************************************************************************************/
 
-const fs = require('fs');
+const fs  = require('fs');
+const fetchWrapper = require('./fetchWrapper');
 const chalk = require('chalk');
-const { fetch } = require('./fetchWrapper');
 const getReactorHeaders = require('./getReactorHeaders');
 const handleResponseError = require('./handleResponseError');
 const logVerboseHeader = require('./logVerboseHeader');
+
+let FormData;
+const awaitFormDataReady = () => import('node-fetch')
+  .then(({ FormData: fd }) => {
+    FormData = fd;
+  });
 
 module.exports = async(
   envConfig,
@@ -25,6 +31,7 @@ module.exports = async(
   zipPath,
   argv
 ) => {
+  await awaitFormDataReady();
   const shouldPost = !extensionPackageFromServer;
 
   if (extensionPackageFromServer) {
@@ -40,20 +47,24 @@ module.exports = async(
     logVerboseHeader('Uploading zip');
   }
 
+  const stream = fs.createReadStream(zipPath)
+  const formData = new FormData();
+  formData.set('package', stream);
   const options = {
     method: shouldPost ? 'POST' : 'PATCH',
     headers: getReactorHeaders(accessToken),
-    formData: {
-      package: fs.createReadStream(zipPath)
-    }
+    body: formData
   };
+  console.log('options are:', options)
 
   try {
     const url = shouldPost
       ? envConfig.extensionPackages
       : `${envConfig.extensionPackages}/${extensionPackageFromServer.id}`;
-    const response = await fetch(url, options);
+    const response = await fetchWrapper.fetch(url, options);
+    console.log('RESPONSE DONE')
     const body = await response.json();
+    console.log('JSON DONE')
     const extensionPackageId = body.data.id;
 
     if (shouldPost) {

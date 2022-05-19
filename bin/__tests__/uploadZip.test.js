@@ -17,7 +17,6 @@ const getReactorHeaders = require('../getReactorHeaders');
 describe('uploadZip', () => {
   let mockFetch;
   let mockFs;
-  let mockReadStream;
   let mockHandleResponseError;
   let mockLogVerboseHeader;
   let uploadZip;
@@ -27,11 +26,15 @@ describe('uploadZip', () => {
     platform: 'web'
   };
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    const awaitFormDataReady = () => import('node-fetch')
+      .then(({ FormData: fd }) => {
+        FormData = fd;
+      });
+    await awaitFormDataReady();
     mockFetch = jasmine.createSpy();
-    mockReadStream = {};
     mockFs = {
-      createReadStream: jasmine.createSpy().and.returnValue(mockReadStream)
+      createReadStream: jasmine.createSpy().and.returnValue(jasmine.createSpy())
     };
     mockHandleResponseError = jasmine.createSpy().and.throwError();
     mockLogVerboseHeader = jasmine.createSpy();
@@ -63,18 +66,16 @@ describe('uploadZip', () => {
       },
       'generatedAccessToken',
       extensionPackageManifest,
-      null,
+      null, // extensionPackageFromServer
       '/extension.zip',
-      {}
+      {} // argv
     );
 
     expect(mockFs.createReadStream).toHaveBeenCalledWith('/extension.zip');
     expect(mockFetch).toHaveBeenCalledWith('https://extensionpackages.com', {
       method: 'POST',
       headers: getReactorHeaders('generatedAccessToken'),
-      formData: {
-        package: mockReadStream
-      }
+      body: jasmine.anything()
     });
     expect(console.log).toHaveBeenCalledWith(`No development extension package was found on the server with the ` +
       `name ${chalk.bold('fake-extension')}. A new extension package will be created.`);
@@ -97,16 +98,14 @@ describe('uploadZip', () => {
         }
       },
       '/extension.zip',
-      {}
+      {} // argv
     );
 
     expect(mockFs.createReadStream).toHaveBeenCalledWith('/extension.zip');
     expect(mockFetch).toHaveBeenCalledWith('https://extensionpackages.com/EP123', {
       method: 'PATCH',
       headers: getReactorHeaders('generatedAccessToken'),
-      formData: {
-        package: mockReadStream
-      }
+      body: jasmine.anything()
     });
     expect(console.log).toHaveBeenCalledWith(`An existing development extension package with the name ` +
       `${chalk.bold('fake-extension')} was found on the server and will be updated. ` +
@@ -132,7 +131,7 @@ describe('uploadZip', () => {
           }
         },
         '/extension.zip',
-        {}
+        {} // argv
       );
     } catch (e) {}
 
@@ -146,7 +145,7 @@ describe('uploadZip', () => {
       },
       'generatedAccessToken',
       extensionPackageManifest,
-      null,
+      null, // extensionPackageFromServer
       '/extension.zip',
       { verbose: true }
     );
