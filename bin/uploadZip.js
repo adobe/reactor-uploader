@@ -55,21 +55,22 @@ module.exports = async(
     headers: getReactorHeaders(accessToken),
     body: formData
   };
-  console.log('options are:', options)
 
   try {
     const url = shouldPost
       ? envConfig.extensionPackages
       : `${envConfig.extensionPackages}/${extensionPackageFromServer.id}`;
     const response = await fetchWrapper.fetch(url, options);
-    console.log('RESPONSE DONE')
     const body = await response.json();
-    console.log('JSON DONE')
     const extensionPackageId = body.data.id;
 
+    let msgPrefix;
     if (shouldPost) {
-      console.log(`The extension package has been assigned the ID ${chalk.bold(extensionPackageId)}.`);
+      msgPrefix = 'The extension package has been assigned the ID';
+    } else {
+      msgPrefix = 'The extension package ID is';
     }
+    console.log(`${msgPrefix} ${chalk.bold(extensionPackageId)}.`)
 
     return extensionPackageId;
   } catch (error) {
