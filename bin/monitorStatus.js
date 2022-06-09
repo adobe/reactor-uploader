@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  ****************************************************************************************/
 
-const { fetch } = require('./fetchWrapper');
+const fetchWrapper = require('./fetchWrapper');
 const delay = require('delay');
 const ora = require('ora');
 const getReactorHeaders = require('./getReactorHeaders');
@@ -39,7 +39,7 @@ const requestStatus = async (
   let body;
 
   try {
-    const response = await fetch(`${envConfig.extensionPackages}/${extensionPackageId}`, {
+    const response = await fetchWrapper.fetch(`${envConfig.extensionPackages}/${extensionPackageId}`, {
       method: 'GET',
       headers: getReactorHeaders(accessToken)
     });

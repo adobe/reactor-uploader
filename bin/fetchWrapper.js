@@ -10,21 +10,30 @@
  * governing permissions and limitations under the License.
  ****************************************************************************************/
 
-const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+const sendFetchRequest = require('node-fetch');
 let debugId = 0;
-let verbose = false;
 
-module.exports = {
-  setVerbose: (v) => {
-    verbose = Boolean(v);
-  },
-  fetch: async (url, options, ...args) => {
-    if (verbose) {
+class FetchWrapper {
+  constructor() {
+    this.isFetchVerbose = false;
+  }
+  set isFetchVerbose(isVerbose) {
+    // don't flip back to false if ever true
+    if (!this.isFetchVerbose && Boolean(isVerbose)) {
+      this._isFetchVerbose = true;
+    }
+  }
+  get isFetchVerbose() {
+    return this._isFetchVerbose;
+  }
+  async fetch(url, options, ...args) {
+    if (this.isFetchVerbose) {
       debugId++;
       let outputReqHeaders = {
         ...options.headers,
         Authorization: 'Bearer [USER_ACCESS_TOKEN]'
       };
+
       console.log('\nRequest:', {
         debugId,
         uri: url,
@@ -34,9 +43,9 @@ module.exports = {
       });
     }
 
-    const response = await fetch.apply(this, [url, options, ...args]);
+    const response = await sendFetchRequest.apply(this, [url, options, ...args]);
 
-    if (!verbose) {
+    if (!this.isFetchVerbose) {
       return response;
     }
 
@@ -57,3 +66,5 @@ module.exports = {
     };
   }
 }
+
+module.exports = new FetchWrapper();

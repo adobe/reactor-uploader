@@ -55,15 +55,14 @@ describe('handleResponseError', () => {
 
   it('throws an error for unknown type of error response', () => {
     let errorMessage;
+    const error = { something: 'unexpected' };
 
     try {
-      handleResponseError({
-        something: 'unexpected'
-      }, 'Failed to do something.');
+      handleResponseError(error, 'Failed to do something.');
     } catch (error) {
       errorMessage = error.message;
     }
 
-    expect(errorMessage).toBe('Failed to do something. An unknown error occurred.');
+    expect(errorMessage).toBe(`Failed to do something. An unknown error occurred: ${JSON.stringify(error)}.`);
   });
 });

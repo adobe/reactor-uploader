@@ -20,7 +20,10 @@ module.exports = (error, messagePrefix) => {
   } else if (error.response && error.response.errors) { // Error from Reactor
     message = getMessageFromReactorError(error.response.errors[0]);
   } else {
-    message = 'An unknown error occurred.';
+    let errorString;
+    try { errorString = JSON.stringify(error); }
+    catch (e) {}
+    message = `An unknown error occurred${errorString ? `: ${errorString}` : ''}.`;
   }
 
   throw new Error(messagePrefix + ' ' + message);

@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  ****************************************************************************************/
 
-const fs = require('fs');
+const fs  = require('fs');
+const fetchWrapper = require('./fetchWrapper');
+const FormData = require('form-data');
 const chalk = require('chalk');
-const { fetch } = require('./fetchWrapper');
 const getReactorHeaders = require('./getReactorHeaders');
 const handleResponseError = require('./handleResponseError');
 const logVerboseHeader = require('./logVerboseHeader');
@@ -40,25 +41,30 @@ module.exports = async(
     logVerboseHeader('Uploading zip');
   }
 
+  const stream = fs.createReadStream(zipPath)
+  const formData = new FormData();
+  formData.append('package', stream);
   const options = {
     method: shouldPost ? 'POST' : 'PATCH',
     headers: getReactorHeaders(accessToken),
-    formData: {
-      package: fs.createReadStream(zipPath)
-    }
+    body: formData
   };
 
   try {
     const url = shouldPost
       ? envConfig.extensionPackages
       : `${envConfig.extensionPackages}/${extensionPackageFromServer.id}`;
-    const response = await fetch(url, options);
+    const response = await fetchWrapper.fetch(url, options);
     const body = await response.json();
     const extensionPackageId = body.data.id;
 
+    let msgPrefix;
     if (shouldPost) {
-      console.log(`The extension package has been assigned the ID ${chalk.bold(extensionPackageId)}.`);
+      msgPrefix = 'The extension package has been assigned the ID';
+    } else {
+      msgPrefix = 'The extension package ID is';
     }
+    console.log(`${msgPrefix} ${chalk.bold(extensionPackageId)}.`)
 
     return extensionPackageId;
   } catch (error) {

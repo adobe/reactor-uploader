@@ -13,7 +13,6 @@
 module.exports = (accessToken) => {
   return {
     'Accept': 'application/vnd.api+json;revision=1',
-    'Content-Type': 'multipart/form-data',
     'Cache-control': 'no-cache',
     'Authorization': `Bearer ${accessToken}`,
     'X-Api-Key': 'Activation-DTM'
