@@ -10,11 +10,8 @@
  * governing permissions and limitations under the License.
  ****************************************************************************************/
 
-let sendFetchRequest, debugId = 0;
-(() => import('node-fetch')
-  .then(({ default: fetch, FormData: fd }) => {
-    sendFetchRequest = fetch;
-  }))();
+const sendFetchRequest = require('node-fetch');
+let debugId = 0;
 
 class FetchWrapper {
   constructor() {

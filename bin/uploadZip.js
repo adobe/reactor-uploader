@@ -12,16 +12,11 @@
 
 const fs  = require('fs');
 const fetchWrapper = require('./fetchWrapper');
+const FormData = require('form-data');
 const chalk = require('chalk');
 const getReactorHeaders = require('./getReactorHeaders');
 const handleResponseError = require('./handleResponseError');
 const logVerboseHeader = require('./logVerboseHeader');
-
-let FormData;
-const awaitFormDataReady = () => import('node-fetch')
-  .then(({ FormData: fd }) => {
-    FormData = fd;
-  });
 
 module.exports = async(
   envConfig,
@@ -31,7 +26,6 @@ module.exports = async(
   zipPath,
   argv
 ) => {
-  await awaitFormDataReady();
   const shouldPost = !extensionPackageFromServer;
 
   if (extensionPackageFromServer) {
@@ -49,7 +43,7 @@ module.exports = async(
 
   const stream = fs.createReadStream(zipPath)
   const formData = new FormData();
-  formData.set('package', stream);
+  formData.append('package', stream);
   const options = {
     method: shouldPost ? 'POST' : 'PATCH',
     headers: getReactorHeaders(accessToken),
