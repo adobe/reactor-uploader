@@ -1,13 +1,13 @@
-# Experience Platform Tags Extension Uploader Tool
+# Adobe Experience Platform Tags Extension Uploader Tool
 
 [![Build Status](https://travis-ci.com/adobe/reactor-uploader.svg?branch=master)](https://travis-ci.com/adobe/reactor-uploader)
 [![npm (scoped)](https://img.shields.io/npm/v/@adobe/reactor-uploader.svg?style=flat)](https://www.npmjs.com/package/@adobe/reactor-uploader)
 
-Experience Platform Tags, by Adobe, is a next-generation tag management solution enabling simplified deployment of marketing technologies. For more information regarding Experience Platform Tags, please visit our [product website](http://www.adobe.com/enterprise/cloud-platform/launch.html).
+Adobe Experience Platform Tags is a next-generation tag management solution enabling simplified deployment of marketing technologies. For more information regarding Tags, please visit our [product website](http://www.adobe.com/enterprise/cloud-platform/launch.html).
 
-The uploader tool allows extension developers to easily upload their Experience Platform Tags extension to the extension marketplace. It can be used for uploading brand new extension packages or new versions of existing extension packages.
+The uploader tool allows extension developers to easily upload their Platform Tags extension to the extension marketplace. It can be used for uploading brand new extension packages or new versions of existing extension packages.
 
-For more information about developing an extension for Experience Platform Tags, please visit our [extension development guide](https://experienceleague.adobe.com/docs/experience-platform/tags/extension-dev/overview.html?lang=en).
+For more information about developing an extension for Tags, please visit our [extension development guide](https://experienceleague.adobe.com/docs/experience-platform/tags/extension-dev/overview.html?lang=en).
 
 ## Usage
 
@@ -15,7 +15,7 @@ Before running the uploader tool, you must first have [Node.js](https://nodejs.o
 
 You will also need to have already created a zip file containing your extension package. The [@adobe/reactor-packager](https://www.npmjs.com/package/@adobe/reactor-packager) tool can be used to create such a zip file.
 
-Finally, you will need to be authorized to upload extensions to Experience Platform Tags. This is done by first creating an integration through Adobe I/O. Please see the [Access Tokens documentation](https://experienceleague.adobe.com/docs/experience-platform/landing/platform-apis/api-authentication.html) for detailed steps on creating an integration and procuring extension management rights.
+Finally, you will need to be authorized to upload extensions to Tags. This is done by first creating an integration through Adobe I/O. Please see the [Access Tokens documentation](https://experienceleague.adobe.com/docs/experience-platform/landing/platform-apis/api-authentication.html) for detailed steps on creating an integration and procuring extension management rights.
 
 Once your zip file is ready to upload and you've been granted extension management rights, you can use the uploader tool in either a question-answer format or by passing information through command line arguments.
 
