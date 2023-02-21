@@ -21,7 +21,7 @@ module.exports = (error, messagePrefix) => {
     message = getMessageFromReactorError(error.response.errors[0]);
   } else {
     let errorString;
-    try { errorString = JSON.stringify(error); }
+    try { errorString = JSON.stringify(error, Object.getOwnPropertyNames(error)); }
     catch (e) {}
     message = `An unknown error occurred${errorString ? `: ${errorString}` : ''}.`;
   }
