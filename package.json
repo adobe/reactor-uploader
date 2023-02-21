@@ -1,6 +1,6 @@
 {
   "name": "@adobe/reactor-uploader",
-  "version": "5.0.9",
+  "version": "5.1.0-beta.0",
   "description": "Command line tool for uploading Tags extensions.",
   "author": {
     "name": "Adobe Systems",
@@ -43,6 +43,6 @@
     "proxyquire": "^2.1.0"
   },
   "engines": {
-    "node": ">=12.13.0"
+    "node": ">=14.21.2"
   }
 }
