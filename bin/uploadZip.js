@@ -56,6 +56,10 @@ module.exports = async(
       : `${envConfig.extensionPackages}/${extensionPackageFromServer.id}`;
     const response = await fetchWrapper.fetch(url, options);
     const body = await response.json();
+    if (!body?.data?.id) {
+      throw new Error(`No extension package ID was returned from the API. Full response body: ${JSON.stringify(body)}`);
+    }
+
     const extensionPackageId = body.data.id;
 
     let msgPrefix;

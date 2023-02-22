@@ -12,7 +12,7 @@
 
 const getMessageFromReactorError = require('./getMessageFromReactorError');
 
-module.exports = (error, messagePrefix) => {
+module.exports = (error, messagePrefix = 'An unknown error occurred:') => {
   let message;
 
   if (error.response && error.response.message) { // Error from Adobe I/O
@@ -20,10 +20,11 @@ module.exports = (error, messagePrefix) => {
   } else if (error.response && error.response.errors) { // Error from Reactor
     message = getMessageFromReactorError(error.response.errors[0]);
   } else {
-    let errorString;
-    try { errorString = JSON.stringify(error, Object.getOwnPropertyNames(error)); }
-    catch (e) {}
-    message = `An unknown error occurred${errorString ? `: ${errorString}` : ''}.`;
+    message = '';
+    try { message = `${JSON.stringify(error, Object.getOwnPropertyNames(error))}.`; }
+    catch (e) {
+      message = 'caught an error when trying to call JSON.stringify on a thrown error.';
+    }
   }
 
   throw new Error(messagePrefix + ' ' + message);

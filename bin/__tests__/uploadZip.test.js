@@ -154,4 +154,57 @@ describe('uploadZip', () => {
 
     expect(mockLogVerboseHeader).toHaveBeenCalledWith('Uploading zip');
   });
+
+  it('gracefully handles when an extension package id is missing', async function () {
+    uploadZip = proxyquire('../uploadZip', {
+      fs: mockFs,
+      './fetchWrapper': {
+        fetch: jasmine.createSpy().and.returnValue(
+          Promise.resolve({
+            json: jasmine.createSpy().and.returnValue(
+              Promise.resolve({
+                errors: [{
+                  id: 'abc-123',
+                  code: 'invalid version',
+                  detail: 'The package you uploaded is older than the latest known version.'
+                }]
+              })
+            )
+          })
+        )
+      },
+      './handleResponseError': mockHandleResponseError,
+      './logVerboseHeader': mockLogVerboseHeader,
+      'form-data': MockFormData
+    });
+
+    try {
+      await uploadZip(
+        {
+          extensionPackages: 'https://extensionpackages.com',
+        },
+        'generatedAccessToken',
+        extensionPackageManifest,
+        {
+          id: 'EP123',
+          attributes: {
+            availability: 'development'
+          }
+        },
+        '/extension.zip',
+        {}
+      );
+    } catch (e) {}
+
+    expect(mockHandleResponseError).toHaveBeenCalledWith(jasmine.any(Error), jasmine.any(String));
+    const [error] = mockHandleResponseError.calls.first().args;
+    expect(error.message).toContain('No extension package ID was returned from the API');
+    expect(error.message).toContain('invalid version');
+    expect(error.message).toContain('The package you uploaded is older than the latest known version.');
+
+    expect(console.log).not.toHaveBeenCalledWith(`No development extension package was found on the server with the ` +
+      `name ${chalk.bold('fake-extension')}. A new extension package will be created.`);
+    expect(console.log).not.toHaveBeenCalledWith(`The extension package has been assigned the ` +
+      `ID ${chalk.bold('EP123')}.`);
+  });
 });

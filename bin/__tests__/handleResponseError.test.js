@@ -63,7 +63,7 @@ describe('handleResponseError', () => {
       errorMessage = error.message;
     }
 
-    expect(errorMessage).toBe(`Failed to do something. An unknown error occurred: ${JSON.stringify(error)}.`);
+    expect(errorMessage).toBe(`Failed to do something. ${JSON.stringify(error)}.`);
   });
 
   it('throws an error for unknown type of error response', () => {
@@ -76,6 +76,6 @@ describe('handleResponseError', () => {
       errorMessage = error.message;
     }
 
-    expect(errorMessage).toBe(`Failed to do something. An unknown error occurred: ${JSON.stringify(error, Object.getOwnPropertyNames(error))}.`);
+    expect(errorMessage).toBe(`Failed to do something. ${JSON.stringify(error, Object.getOwnPropertyNames(error))}.`);
   });
 });
