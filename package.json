@@ -1,6 +1,6 @@
 {
   "name": "@adobe/reactor-uploader",
-  "version": "5.1.0-beta.0",
+  "version": "5.0.10-beta.0",
   "description": "Command line tool for uploading Tags extensions.",
   "author": {
     "name": "Adobe Systems",
