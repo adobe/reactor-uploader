@@ -72,14 +72,14 @@ The environment to which the extension package should be uploaded. Valid options
 Private key path can also be provided by setting an environment variable. The environment variable should be named one of the following, depending on which Experience Platform Tags environment will be receiving the extension package:
 
 * `REACTOR_IO_INTEGRATION_PRIVATE_KEY_DEVELOPMENT`
+* `REACTOR_IO_INTEGRATION_PRIVATE_KEY_STAGE`
 * `REACTOR_IO_INTEGRATION_PRIVATE_KEY_QE`
-* `REACTOR_IO_INTEGRATION_PRIVATE_KEY_INTEGRATION`
 
 Client secret can also be provided by setting an environment variable. The environment variable should be named one of the following, depending on which Experience Platform Tags environment will be receiving the extension package:
 
 * `REACTOR_IO_INTEGRATION_CLIENT_SECRET_DEVELOPMENT`
+* `REACTOR_IO_INTEGRATION_CLIENT_SECRET_STAGE`
 * `REACTOR_IO_INTEGRATION_CLIENT_SECRET_QE`
-* `REACTOR_IO_INTEGRATION_CLIENT_SECRET_INTEGRATION`
 
 ##### --verbose
 
