@@ -70,8 +70,8 @@ const checkOldProductionEnvironmentVariables = require('./checkOldProductionEnvi
 
     checkOldProductionEnvironmentVariables();
     if (environment === 'qe') {
-      console.log(chalk.bold.red('\'--environment=qe\' is currently redirecting to \'--environment=stage\' on your behalf, and will be removed in the future. Prefer usage of \'--environment=stage\'.'))
-      console.log(chalk.bold.red('Prefer usage of \'--environment=stage\'.'))
+      console.log(chalk.bold.red("'--environment=qe' is currently redirecting to '--environment=stage' on your behalf, and will be removed in the future."))
+      console.log(chalk.bold.red("Prefer usage of '--environment=stage'."))
     }
 
     const integrationAccessToken = await getIntegrationAccessToken(envSpecificConfig, argv);
