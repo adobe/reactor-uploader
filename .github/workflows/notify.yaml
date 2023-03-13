@@ -10,7 +10,7 @@ on:
 jobs:
   notify-on-success:
     runs-on: ubuntu-latest
-    if: ${{ NPM_TAG == 'latest' && github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ env.NPM_TAG == 'latest' && github.event.workflow_run.conclusion == 'success' }}
     steps:
       - uses: actions/checkout@v2
       - name: Get latest tag
