@@ -1,6 +1,6 @@
 {
   "name": "@adobe/reactor-uploader",
-  "version": "5.1.0",
+  "version": "5.1.1-beta.5",
   "description": "Command line tool for uploading Tags extensions.",
   "author": {
     "name": "Adobe Systems",
@@ -24,7 +24,7 @@
     "test:watch": "nodemon --exec jasmine JASMINE_CONFIG_PATH=jasmine.json"
   },
   "dependencies": {
-    "@adobe/jwt-auth": "^1.0.1",
+    "@adobe/jwt-auth": "^2.0.0",
     "chalk": "^4.1.0",
     "delay": "^4.4.0",
     "form-data": "^4.0.0",
