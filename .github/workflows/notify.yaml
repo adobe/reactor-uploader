@@ -2,15 +2,16 @@ name: CI notify
 
 # Only trigger, when the build workflow succeeded
 on:
-  workflow_run:
-    workflows: ['Node.js Package']
-    types:
-      - completed
+  workflow_call:
+    inputs:
+      tag:
+        required: true
+        type: 'string'
 
 jobs:
   notify-on-success:
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.tag == 'latest' && github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ inputs.tag == 'latest' && github.event.workflow_run.conclusion == 'success' }}
     steps:
       - uses: actions/checkout@v2
       - name: Get latest tag
