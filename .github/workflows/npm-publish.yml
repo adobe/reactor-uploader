@@ -13,17 +13,14 @@ on:
   release:
     types: [created]
 
-env:
-  NPM_TAG: ${{github.event.inputs.tag}}
-
 jobs:
   publish-npm:
     runs-on: ubuntu-latest
     steps:
       - name: Check Tag Name
-        if: ${{ github.event_name == 'workflow_dispatch' && env.NPM_TAG != 'latest' && env.NPM_TAG != 'next' }}
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.tag != 'latest' && github.event.inputs.tag != 'next' }}
         run: |
-          echo 'Only the tags "latest" or "next" are supported. You entered "${{ env.NPM_TAG }}"'
+          echo 'Only the tags "latest" or "next" are supported. You entered "${{ github.event.inputs.tag }}"'
           exit 1
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
@@ -42,4 +39,4 @@ jobs:
       - uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.ADOBE_BOT_NPM_TOKEN }}
-          tag: ${{ env.NPM_TAG || 'latest' }}
+          tag: ${{ github.event.inputs.tag || 'latest' }}
