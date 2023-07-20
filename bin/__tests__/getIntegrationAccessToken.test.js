@@ -68,7 +68,13 @@ describe('getIntegrationAccessToken', () => {
       prompt: jasmine.createSpy(),
     };
     mockFs = {
-      readFileSync: () => 'privateKey',
+      readFileSync: (path) => {
+        if (path === 'pathToAccessToken') {
+          return 'accessToken';          
+        } else {
+          return 'privateKey';
+        }
+      }
     };
     mockAuth = jasmine.createSpy().and.returnValue({
       access_token: 'generatedAccessToken',
@@ -145,6 +151,18 @@ describe('getIntegrationAccessToken', () => {
 
       expect(mockAuth).toHaveBeenCalledWith(expectedAuthOptions());
       expect(accessToken).toBe('generatedAccessToken');
+    });
+
+    it('supports access-token argument', async () => {
+      const accessToken = await getIntegrationAccessToken(
+        getEnvConfig(),
+        {
+          ...getArguments(),
+          accessToken: "pathToAccessToken"
+        }
+      );
+
+      expect(accessToken).toBe('accessToken');
     });
 
     it('uses environment variables if respective arguments do not exist', async () => {

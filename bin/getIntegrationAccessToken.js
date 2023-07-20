@@ -24,10 +24,14 @@ const METASCOPES = [
 
 module.exports = async (
   envConfig,
-  { privateKey, orgId, techAccountId, apiKey, clientSecret, verbose }
+  { privateKey, orgId, techAccountId, apiKey, clientSecret, verbose, accessToken }
 ) => {
   privateKey = privateKey || process.env[envConfig.privateKeyEnvVar];
   clientSecret = clientSecret || process.env[envConfig.clientSecretEnvVar];
+
+  if (accessToken) {
+    return fs.readFileSync(accessToken);
+  }
 
   if (!privateKey) {
     ({ privateKey } = await inquirer.prompt([
