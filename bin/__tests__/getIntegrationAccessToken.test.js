@@ -147,6 +147,18 @@ describe('getIntegrationAccessToken', () => {
       expect(accessToken).toBe('generatedAccessToken');
     });
 
+    it('supports access-token argument', async () => {
+      const accessToken = await getIntegrationAccessToken(
+        getEnvConfig(),
+        {
+          ...getArguments(),
+          accessToken: "accessToken"
+        }
+      );
+
+      expect(accessToken).toBe('accessToken');
+    });
+
     it('uses environment variables if respective arguments do not exist', async () => {
       const accessToken = await getIntegrationAccessToken(
         getEnvConfig({
