@@ -1,6 +1,6 @@
 {
   "name": "@adobe/reactor-uploader",
-  "version": "5.1.1",
+  "version": "6.0.0-beta.11",
   "description": "Command line tool for uploading Tags extensions.",
   "author": {
     "name": "Adobe Systems",
@@ -20,11 +20,11 @@
     "reactor-uploader": "bin/index.js"
   },
   "scripts": {
-    "test": "jasmine JASMINE_CONFIG_PATH=jasmine.json",
-    "test:watch": "nodemon --exec jasmine JASMINE_CONFIG_PATH=jasmine.json"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll"
   },
   "dependencies": {
-    "@adobe/jwt-auth": "^2.0.0",
+    "@adobe/auth-token": "^1.0.0-beta.13",
     "chalk": "^4.1.0",
     "delay": "^4.4.0",
     "form-data": "^4.0.0",
@@ -37,12 +37,10 @@
     "yauzl": "^2.10.0"
   },
   "devDependencies": {
-    "jasmine": "^3.6.4",
-    "jasmine-expect": "^5.0.0",
-    "nodemon": "^2.0.7",
-    "proxyquire": "^2.1.0"
+    "jest": "^29.7.0",
+    "nodemon": "^2.0.7"
   },
   "engines": {
-    "node": ">=14.21.2"
+    "node": ">=18.19.0"
   }
 }

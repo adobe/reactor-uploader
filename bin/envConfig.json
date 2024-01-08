@@ -1,30 +1,17 @@
 {
   "development": {
-    "ims": "https://ims-na1-stg1.adobelogin.com",
-    "scope": "https://ims-na1-stg1.adobelogin.com/s/",
     "extensionPackages": "https://reactor-dev.adobe.io/extension_packages",
-    "privateKeyEnvVar": "REACTOR_IO_INTEGRATION_PRIVATE_KEY_DEVELOPMENT",
+    "clientIdEnvVar": "REACTOR_IO_INTEGRATION_CLIENT_ID_DEVELOPMENT",
     "clientSecretEnvVar": "REACTOR_IO_INTEGRATION_CLIENT_SECRET_DEVELOPMENT"
   },
-  "qe": {
-    "ims": "https://ims-na1-stg1.adobelogin.com",
-    "scope": "https://ims-na1-stg1.adobelogin.com/s/",
-    "extensionPackages": "https://reactor-stage.adobe.io/extension_packages",
-    "privateKeyEnvVar": "REACTOR_IO_INTEGRATION_PRIVATE_KEY_QE",
-    "clientSecretEnvVar": "REACTOR_IO_INTEGRATION_CLIENT_SECRET_QE"
-  },
   "stage": {
-    "ims": "https://ims-na1-stg1.adobelogin.com",
-    "scope": "https://ims-na1-stg1.adobelogin.com/s/",
     "extensionPackages": "https://reactor-stage.adobe.io/extension_packages",
-    "privateKeyEnvVar": "REACTOR_IO_INTEGRATION_PRIVATE_KEY_STAGE",
+    "clientIdEnvVar": "REACTOR_IO_INTEGRATION_CLIENT_ID_STAGE",
     "clientSecretEnvVar": "REACTOR_IO_INTEGRATION_CLIENT_SECRET_STAGE"
   },
   "production": {
-    "ims": "https://ims-na1.adobelogin.com",
-    "scope": "https://ims-na1.adobelogin.com/s/",
     "extensionPackages": "https://reactor.adobe.io/extension_packages",
-    "privateKeyEnvVar": "REACTOR_IO_INTEGRATION_PRIVATE_KEY",
+    "clientIdEnvVar": "REACTOR_IO_INTEGRATION_CLIENT_ID",
     "clientSecretEnvVar": "REACTOR_IO_INTEGRATION_CLIENT_SECRET"
   }
 }

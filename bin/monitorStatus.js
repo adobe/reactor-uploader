@@ -17,7 +17,6 @@ const getReactorHeaders = require('./getReactorHeaders');
 const handleResponseError = require('./handleResponseError');
 const getMessageFromReactorError = require('./getMessageFromReactorError');
 const logVerboseHeader = require('./logVerboseHeader');
-
 const MAX_RETRIES = 50;
 
 const requestStatus = async (
