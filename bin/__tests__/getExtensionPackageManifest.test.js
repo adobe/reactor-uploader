@@ -28,7 +28,7 @@ describe('getExtensionPackageManifest', () => {
       errorMessage = error.message;
     }
 
-    expect(errorMessage).toStartWith('Error inspecting zip file for extension info.');
+    expect(errorMessage).toMatch(new RegExp('^Error inspecting zip file for extension info.'))
   });
 
   it('throws error for extension package zip without extension.json', async () => {

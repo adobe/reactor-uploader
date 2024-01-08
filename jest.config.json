@@ -1,0 +1,5 @@
+{
+  "moduleNameMapper": {
+    "^@adobe/auth-token$": "<rootDir>/__mocks__/@adobe/auth-token/index.js"
+  }
+}
