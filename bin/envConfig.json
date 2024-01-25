@@ -2,16 +2,19 @@
   "development": {
     "extensionPackages": "https://reactor-dev.adobe.io/extension_packages",
     "clientIdEnvVar": "REACTOR_IO_INTEGRATION_CLIENT_ID_DEVELOPMENT",
-    "clientSecretEnvVar": "REACTOR_IO_INTEGRATION_CLIENT_SECRET_DEVELOPMENT"
+    "clientSecretEnvVar": "REACTOR_IO_INTEGRATION_CLIENT_SECRET_DEVELOPMENT",
+    "accessTokenEnvVar": "REACTOR_IO_INTEGRATION_ACCESS_TOKEN_DEVELOPMENT"
   },
   "stage": {
     "extensionPackages": "https://reactor-stage.adobe.io/extension_packages",
     "clientIdEnvVar": "REACTOR_IO_INTEGRATION_CLIENT_ID_STAGE",
-    "clientSecretEnvVar": "REACTOR_IO_INTEGRATION_CLIENT_SECRET_STAGE"
+    "clientSecretEnvVar": "REACTOR_IO_INTEGRATION_CLIENT_SECRET_STAGE",
+    "accessTokenEnvVar": "REACTOR_IO_INTEGRATION_ACCESS_TOKEN_STAGE"
   },
   "production": {
     "extensionPackages": "https://reactor.adobe.io/extension_packages",
     "clientIdEnvVar": "REACTOR_IO_INTEGRATION_CLIENT_ID",
-    "clientSecretEnvVar": "REACTOR_IO_INTEGRATION_CLIENT_SECRET"
+    "clientSecretEnvVar": "REACTOR_IO_INTEGRATION_CLIENT_SECRET",
+    "accessTokenEnvVar": "REACTOR_IO_INTEGRATION_ACCESS_TOKEN"
   }
 }
