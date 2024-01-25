@@ -33,9 +33,16 @@ module.exports = async (
   argv
 ) => {
   const { auth: authConfig, verbose } = argv;
-  let { scheme: authScheme, clientId, clientSecret, scope: userScopeOverride } = authConfig;
+  let { scheme: authScheme, clientId, clientSecret, scope: userScopeOverride, accessToken } = authConfig;
   if (verbose) {
     logVerboseHeader(`authConfig was ${JSON.stringify(authConfig)}`);
+  }
+  accessToken = accessToken || process.env[envConfig.accessTokenEnvVar];
+  if (typeof accessToken === 'string' && accessToken?.length) {
+    if (verbose) {
+      logVerboseHeader(`Using passed in auth.access-token override`);
+    }
+    return accessToken;
   }
   if (!authSchemes.includes(authScheme)) {
     throw new Error(`Unknown auth.scheme of "${authScheme}" provided. Must be one of ${authSchemes.join(',')}`)

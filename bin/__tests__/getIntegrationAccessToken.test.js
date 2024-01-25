@@ -52,7 +52,7 @@ describe('getIntegrationAccessToken', () => {
   beforeEach(async() => {
     process.env.TEST_CLIENT_ID = 'MyTestClientId';
     process.env.TEST_CLIENT_SECRET = 'MyTestClientSecret';
-    mockAuth = jest.fn().mockResolvedValue({ access_token: 'getIntegrationAccessToken -- value' });
+    mockAuth = jest.fn().mockResolvedValue({ access_token: 'getIntegrationAccessTokenAPICall -- value' });
     jest.mock('@adobe/auth-token', () => ({
       auth: mockAuth
     }));
@@ -110,7 +110,7 @@ describe('getIntegrationAccessToken', () => {
           scope: 'AdobeID,openid,read_organizations,additional_info.job_function,additional_info.projectedProductContext,additional_info.roles'
         }
       );
-      expect(accessToken).toBe('getIntegrationAccessToken -- value');
+      expect(accessToken).toBe('getIntegrationAccessTokenAPICall -- value');
     });
 
     it('uses data from arguments', async () => {
@@ -120,7 +120,7 @@ describe('getIntegrationAccessToken', () => {
       );
 
       expect(mockAuth).toHaveBeenCalledWith(expectedAuthOptions());
-      expect(accessToken).toBe('getIntegrationAccessToken -- value');
+      expect(accessToken).toBe('getIntegrationAccessTokenAPICall -- value');
     });
 
     it('uses environment variables if respective arguments do not exist', async () => {
@@ -133,7 +133,7 @@ describe('getIntegrationAccessToken', () => {
       );
 
       expect(mockAuth).toHaveBeenCalledWith(expectedAuthOptions());
-      expect(accessToken).toBe('getIntegrationAccessToken -- value');
+      expect(accessToken).toBe('getIntegrationAccessTokenAPICall -- value');
     });
 
     it('logs additional detail in verbose mode', async () => {
@@ -157,7 +157,7 @@ describe('getIntegrationAccessToken', () => {
         expect.stringContaining('Authenticating with scope: read_organizations,test_fake_scope')
       );
       expect(mockAuth).toHaveBeenCalledWith(expectedAuthOptions());
-      expect(accessToken).toBe('getIntegrationAccessToken -- value');
+      expect(accessToken).toBe('getIntegrationAccessTokenAPICall -- value');
     });
 
     it('reports error retrieving access token', async () => {
@@ -260,6 +260,19 @@ describe('getIntegrationAccessToken', () => {
       expect(returnedError.message.includes('Error Message: An unknown authentication error occurred')).toBe(true);
       expect(returnedError.message.includes('Error Code: server_error_code')).toBe(true);
       expect(returnedError.code).toBe('server_error_code');
+    });
+
+    it('can use a bypass auth.access-token', async () => {
+      const callArgs = getArguments();
+      callArgs.auth.accessToken = 'override-access-token';
+      // console.log('callArgs', callArgs);
+      const accessToken = await getIntegrationAccessToken(
+        getEnvConfig(),
+        callArgs
+      );
+
+      expect(mockAuth).toHaveBeenCalledTimes(0);
+      expect(accessToken).toBe('override-access-token');
     });
   });
 });
