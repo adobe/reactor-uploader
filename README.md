@@ -34,52 +34,55 @@ The uploader tool will ask for any information necessary to upload the zip file.
 To skip any of the questions the uploader would typically ask, you can pass the respective information as command line arguments. An example is as follows:
 
 ```
-npx @adobe/reactor-uploader package-myextension-1.0.0.zip --private-key=/Users/jane/platform-tags-keys/reactor_integration_private.key --org-id=01C20D883A7D42080A494212@AdobeOrg --tech-account-id=14A533A72B181CF90A44410D@techacct.adobe.com --api-key=192ce541b1144160941a83vb74e0e74d --client-secret=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+npx @adobe/reactor-uploader package-myextension-1.0.0.zip --auth.client-id=abcdefghijklmnopqrstuvwxyz12345 --auth.client-secret=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 ```
 
 The first positional parameter is the path (relative or absolute) to the zip file you wish to upload. In the example, `package-myextension-1.0.0.zip` is passed as an argument for this parameter.
 
 The named parameters are as follows:
 
-##### --private-key (for authentication using an Adobe I/O integration)
+##### --auth.client-id (for authentication using an Adobe I/O integration)
 
-The local path (relative or absolute) to the RSA private key. Instructions on how to generate this key can be found in the [Access Tokens documentation](https://developer.adobelaunch.com/api/guides/access_tokens/) and should have been used when creating your integration through the Adobe I/O console.
+Your Client ID. You can find this on the overview screen for the integration you have created within the [Adobe I/O console](https://console.adobe.io).
 
-Optionally, rather than passing the private key path as a command line argument, it can instead be provided by setting an environment variable. The environment variable should be named `REACTOR_IO_INTEGRATION_PRIVATE_KEY`.
+Client ID can also be provided by setting an environment variable. The environment variable should be named one of the following, depending on which Experience Platform Tags environment will be receiving the extension package:
 
-##### --org-id (for authentication using an Adobe I/O integration)
+* `REACTOR_IO_INTEGRATION_CLIENT_ID_DEVELOPMENT`
+* `REACTOR_IO_INTEGRATION_CLIENT_ID_STAGE`
+* `REACTOR_IO_INTEGRATION_CLIENT_ID` (this is the default, and is used for production environment)
 
-Your organization ID. You can find this on the overview screen for the integration you have created within the [Adobe I/O console](https://console.adobe.io).
+##### --auth.client-secret (for authentication using an Adobe I/O integration)
 
-##### --tech-account-id (for authentication using an Adobe I/O integration)
+Your Client Secret. You can find this on the overview screen for the integration you have created within the [Adobe I/O console](https://console.adobe.io).
 
-Your technical account ID. You can find this on the overview screen for the integration you have created within the [Adobe I/O console](https://console.adobe.io).
-
-##### --api-key (for authentication using an Adobe I/O integration)
-
-Your API key/Client ID. You can find this on the overview screen for the integration you have created within the [Adobe I/O console](https://console.adobe.io).
-
-##### --client-secret (for authentication using an Adobe I/O integration)
-
-Your client secret. You can find this on the overview screen for the integration you have created within the [Adobe I/O console](https://console.adobe.io).
-
-Optionally, rather than passing the client secret as a command line argument, it can instead be provided by setting an environment variable. The environment variable should be named `REACTOR_IO_INTEGRATION_CLIENT_SECRET`.
-
-##### --environment (for Adobe internal use only)
-
-The environment to which the extension package should be uploaded. Valid options are `development`, `qe`, `integration`. Users outside of Adobe don't need to use this flag.
-
-Private key path can also be provided by setting an environment variable. The environment variable should be named one of the following, depending on which Experience Platform Tags environment will be receiving the extension package:
-
-* `REACTOR_IO_INTEGRATION_PRIVATE_KEY_DEVELOPMENT`
-* `REACTOR_IO_INTEGRATION_PRIVATE_KEY_STAGE`
-* `REACTOR_IO_INTEGRATION_PRIVATE_KEY_QE` (Deprecated. Please favor `REACTOR_IO_INTEGRATION_PRIVATE_KEY_STAGE`)
-
-Client secret can also be provided by setting an environment variable. The environment variable should be named one of the following, depending on which Experience Platform Tags environment will be receiving the extension package:
+Client Secret can also be provided by setting an environment variable. The environment variable should be named one of the following, depending on which Experience Platform Tags environment will be receiving the extension package:
 
 * `REACTOR_IO_INTEGRATION_CLIENT_SECRET_DEVELOPMENT`
 * `REACTOR_IO_INTEGRATION_CLIENT_SECRET_STAGE`
-* `REACTOR_IO_INTEGRATION_CLIENT_SECRET_QE` (Deprecated. Please favor `REACTOR_IO_INTEGRATION_CLIENT_SECRET_STAGE`)
+* `REACTOR_IO_INTEGRATION_CLIENT_SECRET` (this is the default, and is used for production environment)
+
+##### --environment (for Adobe internal use only)
+
+The environment to which the extension package should be uploaded. Valid options are `development`, `stage`, `production`. Users outside of Adobe don't need to use this flag.
+
+##### -- auth.scope (for authentication using an Adobe I/O integration)
+
+The scopes to bind to the Access Token that is returned. Sane defaults are provided on your behalf within this repository, but you may override them if it is necessary.
+
+##### --auth.scheme (for authentication using an Adobe I/O integration)
+
+The type of authentication method when calling Adobe IO. This defaults to `oauth-server-to-server` and is used in conjunction with your Client ID & Client Secret.
+
+##### --auth.access-token
+
+Bypass the call to gain an Access Token if you already have the ability to supply it to the command line or through an environment variable. This is useful if you are running this tool in a CI/CD environment.
+We highly encourage only using an environment variable within a CI/CD environment, as it is more secure than passing it through the command line.
+
+The environment variable should be named one of the following, depending on which Experience Platform Tags environment will be receiving the extension package:
+
+* `REACTOR_IO_INTEGRATION_ACCESS_TOKEN_DEVELOPMENT`
+* `REACTOR_IO_INTEGRATION_ACCESS_TOKEN_STAGE`
+* `REACTOR_IO_INTEGRATION_ACCESS_TOKEN` (this is the default, and is used for production environment)
 
 ##### --verbose
 
