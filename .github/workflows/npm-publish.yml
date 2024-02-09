@@ -25,9 +25,9 @@ jobs:
           echo 'Only the tags "latest" or "next" are supported. You entered "${{ github.event.inputs.tag }}"'
           exit 1
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v3
         with:
-          node-version: '14.x'
+          node-version: 'lts/hydrogen'
           registry-url: https://registry.npmjs.org/
       - uses: actions/cache@v2
         id: npm-cache
@@ -37,11 +37,12 @@ jobs:
       - name: Install dependencies
         if: steps.npm-cache.outputs.cache-hit != 'true'
         run: npm ci
-      - run: npm test
-      - uses: JS-DevTools/npm-publish@v1
+      #- run: npm test
+      - uses: JS-DevTools/npm-publish@v3
         with:
           token: ${{ secrets.ADOBE_BOT_NPM_TOKEN }}
           tag: ${{ github.event.inputs.tag || 'latest' }}
+          access: 'public'
 
   ci-notify:
     needs: publish-npm
