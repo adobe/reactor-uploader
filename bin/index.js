@@ -38,6 +38,12 @@ const argv = require('yargs/yargs')(hideBin(process.argv))
       type: 'string',
       describe: 'For authentication using an Adobe I/O integration. Your client secret. You can find this on the overview screen for the integration you have created within the Adobe I/O console (https://console.adobe.io). Optionally, rather than passing the client secret as a command line argument, it can instead be provided by setting one of the following environment variables, depending on the environment that will be receiving the extension package: REACTOR_IO_INTEGRATION_CLIENT_SECRET_DEVELOPMENT, REACTOR_IO_INTEGRATION_CLIENT_SECRET_QE, REACTOR_IO_INTEGRATION_CLIENT_SECRET_STAGE, REACTOR_IO_INTEGRATION_CLIENT_SECRET. REACTOR_IO_INTEGRATION_CLIENT_SECRET_QE is deprecated in favor of REACTOR_IO_INTEGRATION_CLIENT_SECRET_STAGE and will be removed in the future.'
     },
+    'upload-timeout': {
+      type: 'number',
+      describe:
+        'The maximum time in seconds to wait for the extension package to be uploaded. If the extension package has not been uploaded within this time, the command will exit with an error.',
+      default: 50
+    },
     environment: {
       type: 'string',
       describe: 'The environment to which the extension packaqe should be uploaded (for Adobe internal use only).',
