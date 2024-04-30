@@ -86,7 +86,7 @@ describe('monitorStatus', () => {
     let errorMessage;
 
     try {
-      await monitorStatus(envConfig, accessToken, extensionPackageId, {});
+      await monitorStatus(envConfig, accessToken, extensionPackageId, {uploadTimeout: 50});
     } catch (error) {
       errorMessage = error.message;
     }
