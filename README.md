@@ -81,6 +81,10 @@ Client secret can also be provided by setting an environment variable. The envir
 * `REACTOR_IO_INTEGRATION_CLIENT_SECRET_STAGE`
 * `REACTOR_IO_INTEGRATION_CLIENT_SECRET_QE` (Deprecated. Please favor `REACTOR_IO_INTEGRATION_CLIENT_SECRET_STAGE`)
 
+##### --upload-timeout
+
+The maximum time in seconds to wait for the extension package to be uploaded. If the extension package has not been uploaded within this time, the command will exit with an error. The default value is 50 seconds.
+
 ##### --verbose
 
 Logs additional information useful for debugging.
