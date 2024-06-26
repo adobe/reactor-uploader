@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  ****************************************************************************************/
 
-const proxyquire = require('proxyquire');
 const getReactorHeaders = require('../getReactorHeaders');
 
 describe('getExtensionPackageFromServer', () => {
@@ -25,8 +24,8 @@ describe('getExtensionPackageFromServer', () => {
   let mockFetch;
   let mockFetchJsonHandler;
   let mockHandleResponseError;
-  let mockLogVerboseHeader;
   let getExtensionPackageFromServer;
+  let consoleSpy;
 
   const _constructedURL = new URL('https://extensionpackages');
   _constructedURL.search = new URLSearchParams({
@@ -44,32 +43,34 @@ describe('getExtensionPackageFromServer', () => {
   };
 
   beforeEach(() => {
-    mockFetch = jasmine.createSpy();
-    mockFetchJsonHandler = jasmine.createSpy();
-    mockHandleResponseError = jasmine.createSpy().and.throwError();
-    mockLogVerboseHeader = jasmine.createSpy();
-    getExtensionPackageFromServer = proxyquire('../getExtensionPackageFromServer', {
-      './fetchWrapper': {
-        fetch: mockFetch.and.returnValue(
-          Promise.resolve({
-            json: mockFetchJsonHandler
-          })
-        )
-      },
-      './handleResponseError': mockHandleResponseError,
-      './logVerboseHeader': mockLogVerboseHeader
+    mockFetchJsonHandler = jest.fn()
+    mockFetch = jest.fn().mockResolvedValue({
+      json: mockFetchJsonHandler
     });
-    spyOn(console, 'log');
+    jest.mock('../fetchWrapper', () => ({
+      fetch: mockFetch
+    }));
+    mockHandleResponseError = jest.fn().mockImplementation(() => {
+      throw new Error();
+    });
+    jest.mock('../handleResponseError', () => mockHandleResponseError);
+    jest.resetModules();
+    getExtensionPackageFromServer = require('../getExtensionPackageFromServer.js');
+    consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it('returns ID from existing extension package', async () => {
-    mockFetchJsonHandler.and.returnValue({
+    mockFetchJsonHandler.mockImplementationOnce(() => ({
       data: [
         {
           id: 'EP123'
         }
       ]
-    });
+    }));
 
     const result = await getExtensionPackageFromServer(envConfig, accessToken, extensionPackageManifest, {});
 
@@ -78,9 +79,9 @@ describe('getExtensionPackageFromServer', () => {
   });
 
   it('returns null if no extension package found', async () => {
-    mockFetchJsonHandler.and.returnValue({
+    mockFetchJsonHandler.mockImplementationOnce(() => ({
       data: []
-    });
+    }));
 
     const result = await getExtensionPackageFromServer(envConfig, accessToken, extensionPackageManifest, {});
 
@@ -90,14 +91,16 @@ describe('getExtensionPackageFromServer', () => {
 
   it('calls handleResponseError on response error', async () => {
     const error = new Error();
-    mockFetchJsonHandler.and.throwError(error);
+    mockFetchJsonHandler.mockImplementationOnce(() => {
+      throw error;
+    });
 
     try {
       await getExtensionPackageFromServer(envConfig, accessToken, extensionPackageManifest, {});
     } catch (e) {}
 
     expect(mockFetch).toHaveBeenCalledWith(expectedURL, expectedRequestOptions);
-    expect(mockHandleResponseError).toHaveBeenCalledWith(error, jasmine.any(String));
+    expect(mockHandleResponseError).toHaveBeenCalledWith(error, expect.any(String));
   });
 
   it('logs additional detail in verbose mode', async () => {
@@ -105,6 +108,8 @@ describe('getExtensionPackageFromServer', () => {
       await getExtensionPackageFromServer(envConfig, accessToken, extensionPackageManifest, { verbose: true });
     } catch (e) {}
 
-    expect(mockLogVerboseHeader).toHaveBeenCalledWith('Retrieving extension package from server');
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.stringContaining('Retrieving extension package from server')
+    );
   });
 });

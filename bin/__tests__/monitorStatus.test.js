@@ -12,7 +12,6 @@
 
 const os = require('os');
 const chalk = require('chalk');
-const proxyquire = require('proxyquire');
 const getReactorHeaders = require('../getReactorHeaders');
 
 describe('monitorStatus', () => {
@@ -23,9 +22,9 @@ describe('monitorStatus', () => {
   const extensionPackageId = 'EP123';
   let mockFetch;
   let mockFetchJsonHandler;
-  let mockLogVerboseHeader;
   let monitorStatus;
-  let spinner;
+  let mockSpinner;
+  let consoleSpy;
 
   const expectedURL = 'https://extensionpackages/EP123';
   const expectedRequestOptions = {
@@ -33,31 +32,35 @@ describe('monitorStatus', () => {
     headers: getReactorHeaders('fake-token')
   };
 
-  beforeEach(() => {
-    mockFetch = jasmine.createSpy();
-    mockFetchJsonHandler = jasmine.createSpy();
-    mockLogVerboseHeader = jasmine.createSpy();
-    const mockHandleResponseError = jasmine.createSpy().and.throwError();
-    monitorStatus = proxyquire('../monitorStatus', {
-      './fetchWrapper': {
-        fetch: mockFetch.and.returnValue(
-          Promise.resolve({
-            json: mockFetchJsonHandler
-          })
-        )
-      },
-      'ora': () => {
-        spinner = jasmine.createSpyObj('spinner', ['start', 'stop', 'succeed']);
-        return spinner;
-      },
-      'delay': () => {},
-      './handleResponseError': mockHandleResponseError,
-      './logVerboseHeader': mockLogVerboseHeader
+  beforeEach(async () => {
+    mockFetchJsonHandler = jest.fn();
+    mockFetch = jest.fn().mockResolvedValue({ json: mockFetchJsonHandler });
+    const mockHandleResponseError = jest.fn().mockImplementation(() => {
+      throw new Error('mockHandleResponseError');
     });
+    jest.mock('../fetchWrapper', () => ({
+      fetch: mockFetch
+    }));
+    mockSpinner = {
+      start: jest.fn(),
+      stop: jest.fn(),
+      succeed: jest.fn()
+    };
+    jest.mock('ora', () => () => mockSpinner);
+    jest.mock('delay', () => jest.fn());
+    jest.mock('../handleResponseError', () => mockHandleResponseError);
+    consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+
+    jest.resetModules();
+    monitorStatus = require('../monitorStatus');
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it('reports a successful extension package', async () => {
-    mockFetchJsonHandler.and.returnValue({
+    mockFetchJsonHandler.mockReturnValueOnce({
       data: {
         attributes: {
           status: 'succeeded'
@@ -65,15 +68,14 @@ describe('monitorStatus', () => {
       }
     });
 
-    await monitorStatus(envConfig, accessToken, extensionPackageId, {});
-
+    await monitorStatus(envConfig, accessToken, extensionPackageId, { uploadTimeout: 50 });
     expect(mockFetch).toHaveBeenCalledWith(expectedURL, expectedRequestOptions);
-    expect(spinner.start).toHaveBeenCalled();
-    expect(spinner.succeed).toHaveBeenCalled();
+    expect(mockSpinner.start).toHaveBeenCalled();
+    expect(mockSpinner.succeed).toHaveBeenCalled();
   });
 
-  it('continues monitoring a pending extension package up to 50 requests', async () => {
-    mockFetchJsonHandler.and.returnValue({
+  it('continues monitoring a pending extension package up to the defined upload timeout', async () => {
+    mockFetchJsonHandler.mockReturnValue({
       data: {
         attributes: {
           status: 'pending'
@@ -84,20 +86,20 @@ describe('monitorStatus', () => {
     let errorMessage;
 
     try {
-      await monitorStatus(envConfig, accessToken, extensionPackageId, {uploadTimeout: 50});
+      await monitorStatus(envConfig, accessToken, extensionPackageId, { uploadTimeout: 50 });
     } catch (error) {
       errorMessage = error.message;
     }
 
     expect(mockFetch).toHaveBeenCalledWith(expectedURL, expectedRequestOptions);
-    expect(spinner.start).toHaveBeenCalled();
-    expect(spinner.succeed).not.toHaveBeenCalled();
+    expect(mockSpinner.start).toHaveBeenCalled();
+    expect(mockSpinner.succeed).not.toHaveBeenCalled();
     expect(errorMessage).toBe('The extension package failed to be processed within the expected timeframe.');
-    expect(mockFetch.calls.count()).toBe(50);
+    expect(mockFetch).toHaveBeenCalledTimes(50);
   });
 
   it('reports a failed extension package', async () => {
-    mockFetchJsonHandler.and.returnValue(Promise.resolve({
+    mockFetchJsonHandler.mockReturnValueOnce({
       data: {
         attributes: {
           status: 'failed'
@@ -113,7 +115,7 @@ describe('monitorStatus', () => {
           }
         }
       }
-    }));
+    });
 
     let errorMessage;
 
@@ -124,8 +126,8 @@ describe('monitorStatus', () => {
     }
 
     expect(mockFetch).toHaveBeenCalledWith(expectedURL, expectedRequestOptions);
-    expect(spinner.start).toHaveBeenCalled();
-    expect(spinner.stop).toHaveBeenCalled();
+    expect(mockSpinner.start).toHaveBeenCalled();
+    expect(mockSpinner.stop).toHaveBeenCalled();
     expect(errorMessage).toBe(`Extension package processing failed. ` +
       `${os.EOL}${chalk.green('title: ')} Bad Thing Happened.${os.EOL}` +
       `${chalk.green('detail: ')}Something really bad happened.`);
@@ -136,6 +138,8 @@ describe('monitorStatus', () => {
       await monitorStatus(envConfig, accessToken, extensionPackageId, { verbose: true });
     } catch (error) {}
 
-    expect(mockLogVerboseHeader).toHaveBeenCalledWith('Checking extension package status');
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.stringContaining('Checking extension package status')
+    );
   });
 });
