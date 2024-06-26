@@ -68,13 +68,13 @@ describe('monitorStatus', () => {
       }
     });
 
-    await monitorStatus(envConfig, accessToken, extensionPackageId, {});
+    await monitorStatus(envConfig, accessToken, extensionPackageId, { uploadTimeout: 50 });
     expect(mockFetch).toHaveBeenCalledWith(expectedURL, expectedRequestOptions);
     expect(mockSpinner.start).toHaveBeenCalled();
     expect(mockSpinner.succeed).toHaveBeenCalled();
   });
 
-  it('continues monitoring a pending extension package up to 50 requests', async () => {
+  it('continues monitoring a pending extension package up to the defined upload timeout', async () => {
     mockFetchJsonHandler.mockReturnValue({
       data: {
         attributes: {
@@ -86,7 +86,7 @@ describe('monitorStatus', () => {
     let errorMessage;
 
     try {
-      await monitorStatus(envConfig, accessToken, extensionPackageId, {uploadTimeout: 50});
+      await monitorStatus(envConfig, accessToken, extensionPackageId, { uploadTimeout: 50 });
     } catch (error) {
       errorMessage = error.message;
     }

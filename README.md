@@ -84,9 +84,14 @@ The environment variable should be named one of the following, depending on whic
 * `REACTOR_IO_INTEGRATION_ACCESS_TOKEN_STAGE`
 * `REACTOR_IO_INTEGRATION_ACCESS_TOKEN` (this is the default, and is used for production environment)
 
-##### --upload-timeout
+Bypass the call to gain an Access Token if you already have the ability to supply it to the command line or through an environment variable. This is useful if you are running this tool in a CI/CD environment.
+We highly encourage only using an environment variable within a CI/CD environment, as it is more secure than passing it through the command line.
 
-The maximum time in seconds to wait for the extension package to be uploaded. If the extension package has not been uploaded within this time, the command will exit with an error. The default value is 50 seconds.
+The environment variable should be named one of the following, depending on which Experience Platform Tags environment will be receiving the extension package:
+
+* `REACTOR_IO_INTEGRATION_ACCESS_TOKEN_DEVELOPMENT`
+* `REACTOR_IO_INTEGRATION_ACCESS_TOKEN_STAGE`
+* `REACTOR_IO_INTEGRATION_ACCESS_TOKEN` (this is the default, and is used for production environment)
 
 ##### --verbose
 
