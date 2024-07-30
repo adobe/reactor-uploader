@@ -93,6 +93,10 @@ The environment variable should be named one of the following, depending on whic
 * `REACTOR_IO_INTEGRATION_ACCESS_TOKEN_STAGE`
 * `REACTOR_IO_INTEGRATION_ACCESS_TOKEN` (this is the default, and is used for production environment)
 
+##### --uploadTimeout
+
+The maximum time in seconds to wait for the extension package to be uploaded. If the extension package has not been uploaded within this time, the command will exit with an error. Defaults to 50s.
+
 ##### --verbose
 
 Logs additional information useful for debugging.
