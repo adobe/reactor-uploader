@@ -42,6 +42,12 @@ const argv = require('yargs/yargs')(hideBin(process.argv))
       describe: 'An access token to use, as supplied by an environment variable or other means. Replaces the need to supply' +
         ' client-id, client-secret, and scope.'
     },
+    'upload-timeout': {
+      type: 'number',
+      describe:
+        'The maximum time in seconds to wait for the extension package to be uploaded. If the extension package has not been uploaded within this time, the command will exit with an error.',
+      default: 50
+    },
     environment: {
       type: 'string',
       describe: 'The environment to which the extension package should be uploaded.',

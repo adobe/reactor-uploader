@@ -17,7 +17,6 @@ const getReactorHeaders = require('./getReactorHeaders');
 const handleResponseError = require('./handleResponseError');
 const getMessageFromReactorError = require('./getMessageFromReactorError');
 const logVerboseHeader = require('./logVerboseHeader');
-const MAX_RETRIES = 50;
 
 const requestStatus = async (
   envConfig,
@@ -27,8 +26,10 @@ const requestStatus = async (
   spinner,
   retries = 0
 ) => {
-  if (retries >= MAX_RETRIES) {
-    throw new Error('The extension package failed to be processed within the expected timeframe.');
+  if (retries >= argv.uploadTimeout) {
+    throw new Error(
+      'The extension package failed to be processed within the expected timeframe.'
+    );
   }
 
   if (argv.verbose) {
