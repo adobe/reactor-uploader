@@ -13,12 +13,12 @@ jobs:
     name: "Unit Test"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 'lts/hydrogen'
           registry-url: https://registry.npmjs.org/
-      - uses: actions/cache@v2
+      - uses: actions/cache@v4
         id: npm-cache
         with:
           path: '**/node_modules'

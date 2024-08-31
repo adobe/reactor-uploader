@@ -24,12 +24,12 @@ jobs:
         run: |
           echo 'Only the tags "latest" or "next" are supported. You entered "${{ github.event.inputs.tag }}"'
           exit 1
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 'lts/hydrogen'
+          node-version: 'lts/iron'
           registry-url: https://registry.npmjs.org/
-      - uses: actions/cache@v2
+      - uses: actions/cache@v4
         id: npm-cache
         with:
           path: '**/node_modules'

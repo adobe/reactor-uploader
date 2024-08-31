@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ inputs.tag == 'latest'}}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Get latest tag
         uses: oprypin/find-latest-tag@v1
         with:
