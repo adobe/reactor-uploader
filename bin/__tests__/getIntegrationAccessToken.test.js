@@ -57,14 +57,16 @@ describe('getIntegrationAccessToken', () => {
       auth: mockAuth
     }));
     mockInquirer = jest.mock('inquirer', () => ({
-      prompt: jest.fn().mockImplementation(([ prompt ]) => {
-        switch (prompt.name) {
-          case 'clientId':
-            return { clientId: 'MyTestClientId' };
-          case 'clientSecret':
-            return { clientSecret: 'MyTestClientSecret' };
-        }
-      })
+      default: {
+        prompt: jest.fn().mockImplementation(([ prompt ]) => {
+          switch (prompt.name) {
+            case 'clientId':
+              return { clientId: 'MyTestClientId' };
+            case 'clientSecret':
+              return { clientSecret: 'MyTestClientSecret' };
+          }
+        })
+      }
     }));
     jest.resetModules();
     // Import the module with dynamic import

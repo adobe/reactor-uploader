@@ -113,7 +113,7 @@ const checkOldProductionEnvironmentVariables = require('./checkOldProductionEnvi
       argv
     );
   } catch (error) {
-    if (argv.verbose || !error.code) {
+    if (true || argv.verbose || !error.code) {
       console.log(chalk.bold.red('--verbose output:'))
       throw error;
     }

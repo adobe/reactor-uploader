@@ -12,7 +12,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const inquirer = require('inquirer');
+const inquirer = require('inquirer').default;
 
 const ZIP_NAME_REGEX = /\.zip$/;
 
