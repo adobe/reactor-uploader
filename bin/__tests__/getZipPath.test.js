@@ -1,5 +1,5 @@
 const path = require('path');
-const inquirer = require('inquirer');
+const inquirer = require('inquirer').default;
 const getZipPath = require('../getZipPath');
 
 const fileFromSingleZipDir = path.join(__dirname, 'singleZip', 'helloWorld.zip');
