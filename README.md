@@ -9,6 +9,11 @@ The uploader tool allows extension developers to easily upload their Platform Ta
 
 For more information about developing an extension for Tags, please visit our [extension development guide](https://experienceleague.adobe.com/docs/experience-platform/tags/extension-dev/overview.html?lang=en).
 
+> [!WARNING]  
+> The uploader tool now uses Adobe's [Oauth Server-to-Server credential format](https://experienceleague.adobe.com/en/docs/experience-cloud-kcs/kbarticles/ka-22080) by default.
+> 
+> Legacy support for `jwt-auth` credentials will end completely by Adobe in January 2025. You may download and run the [legacy version of the uploader here](https://github.com/adobe/reactor-uploader/releases/tag/legacy-jwt-uploader-v5.2.0).
+
 ## Usage
 
 Before running the uploader tool, you must first have [Node.js](https://nodejs.org/en/) installed on your computer.
