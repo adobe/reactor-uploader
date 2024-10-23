@@ -23,7 +23,7 @@ jobs:
       - name: Notify Slack of Release
         uses: tokorom/action-slack-incoming-webhook@main
         env:
-         INCOMING_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         with:
          text: "A new version of ${{ github.event.repository.full_name }}[${{ steps.repoTag.outputs.tag }}] has been released"
          attachments: |
