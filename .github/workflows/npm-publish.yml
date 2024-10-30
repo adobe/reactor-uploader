@@ -8,7 +8,7 @@ on:
     inputs:
       tag:
         description: 'The tag to publish to: latest | next'
-        required: false
+        required: true
         default: 'latest'
   release:
     types: [created]
@@ -43,9 +43,3 @@ jobs:
           token: ${{ secrets.ADOBE_BOT_NPM_TOKEN }}
           tag: ${{ github.event.inputs.tag || 'latest' }}
           access: 'public'
-
-  ci-notify:
-    needs: publish-npm
-    uses: adobe/reactor-uploader/.github/workflows/notify.yaml@master
-    with:
-      tag: ${{github.event.inputs.tag}}

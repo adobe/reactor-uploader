@@ -9,23 +9,10 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  ****************************************************************************************/
-
-const proxyquire = require('proxyquire');
-
-const METASCOPES = [
-  'ent_reactor_sdk',
-  // The below metascopes are necessary to maintain for integrations created before the ent_reactor_sdk metascope existed.
-  'ent_reactor_extension_developer_sdk',
-  'ent_reactor_admin_sdk',
-];
-
 const getEnvConfig = o => {
   return Object.assign(
     {},
-    {
-      scope: 'https://scope.com/s/',
-      ims: 'https://ims.com/c/',
-    },
+    {},
     o
   );
 };
@@ -34,11 +21,12 @@ const getArguments = o => {
   return Object.assign(
     {},
     {
-      privateKey: 'MyPrivateKey',
-      orgId: 'MyOrgId',
-      techAccountId: 'MyTechAccountId',
-      apiKey: 'MyApiKey',
-      clientSecret: 'MyClientSecret',
+      auth: {
+        clientId: 'MyTestClientId',
+        clientSecret: 'MyTestClientSecret',
+        scope: 'read_organizations,test_fake_scope',
+        scheme: 'oauth-server-to-server'
+      },
     },
     o
   );
@@ -58,83 +46,73 @@ const mockUnhandledException = message => {
 describe('getIntegrationAccessToken', () => {
   let getIntegrationAccessToken;
   let mockInquirer;
-  let mockFs;
-  let mockLogVerboseHeader;
+  let mockAuth;
+  let consoleSpy;
 
-  beforeEach(() => {
-    process.env.TEST_PRIVATE_KEY = 'MyPrivateKey';
-    process.env.TEST_CLIENT_SECRET = 'MyClientSecret';
-    mockInquirer = {
-      prompt: jasmine.createSpy(),
-    };
-    mockFs = {
-      readFileSync: () => 'privateKey',
-    };
-    mockAuth = jasmine.createSpy().and.returnValue({
-      access_token: 'generatedAccessToken',
+  beforeEach(async() => {
+    process.env.TEST_CLIENT_ID = 'MyTestClientId';
+    process.env.TEST_CLIENT_SECRET = 'MyTestClientSecret';
+    mockAuth = jest.fn().mockResolvedValue({ access_token: 'getIntegrationAccessTokenAPICall -- value' });
+    jest.mock('@adobe/auth-token', () => ({
+      auth: mockAuth
+    }));
+    mockInquirer = jest.mock('inquirer', () => ({
+      default: {
+        prompt: jest.fn().mockImplementation(([ prompt ]) => {
+          switch (prompt.name) {
+            case 'clientId':
+              return { clientId: 'MyTestClientId' };
+            case 'clientSecret':
+              return { clientSecret: 'MyTestClientSecret' };
+          }
+        })
+      }
+    }));
+    jest.resetModules();
+    // Import the module with dynamic import
+    await import('../getIntegrationAccessToken.js').then((module) => {
+      getIntegrationAccessToken = module.default;
     });
-    mockLogVerboseHeader = jasmine.createSpy();
-
-    getIntegrationAccessToken = proxyquire('../getIntegrationAccessToken', {
-      inquirer: mockInquirer,
-      fs: mockFs,
-      '@adobe/jwt-auth': mockAuth,
-      './logVerboseHeader': mockLogVerboseHeader,
-    });
-
-    spyOn(console, 'log');
+    consoleSpy = jest.spyOn(console, 'log').mockImplementation();
   });
 
   afterEach(() => {
-    delete process.env.TEST_PRIVATE_KEY;
+    delete process.env.TEST_CLIENT_ID;
     delete process.env.TEST_CLIENT_SECRET;
+    jest.clearAllMocks();
   });
 
   describe('integration authentication method', () => {
     const expectedAuthOptions = (o = {}) =>
       Object.assign(
-        {
-          clientId: 'MyApiKey',
-          clientSecret: 'MyClientSecret',
-          technicalAccountId: 'MyTechAccountId',
-          orgId: 'MyOrgId',
-          privateKey: 'privateKey',
-          metaScopes: [
-            'https://scope.com/s/ent_reactor_sdk',
-          ],
-          ims: 'https://ims.com/c/',
+        { // this is the shape from https://github.com/adobe/auth-token
+          clientId: 'MyTestClientId',
+          clientSecret: 'MyTestClientSecret',
+          scope: 'read_organizations,test_fake_scope',
+          authScheme: 'oauth-server-to-server',
+          environment: 'production'
         },
         o
       );
 
     it('prompts for data', async () => {
-      mockInquirer.prompt.and.callFake(prompts => {
-        switch (prompts[0].name) {
-          case 'authMethod':
-            return { authMethod: 'integration' };
-          case 'privateKey':
-            return { privateKey: 'MyPrivateKey' };
-          case 'orgId':
-            return { orgId: 'MyOrgId' };
-          case 'techAccountId':
-            return { techAccountId: 'MyTechAccountId' };
-          case 'apiKey':
-            return { apiKey: 'MyApiKey' };
-          case 'clientSecret':
-            return { clientSecret: 'MyClientSecret' };
-        }
-      });
-
       const accessToken = await getIntegrationAccessToken(
+        {},
         {
-          scope: 'https://scope.com/s/',
-          ims: 'https://ims.com/c/',
-        },
-        {}
+          auth: {
+            scheme: 'oauth-server-to-server'
+          }
+        }
       );
 
-      expect(mockAuth).toHaveBeenCalledWith(expectedAuthOptions());
-      expect(accessToken).toBe('generatedAccessToken');
+      // we did not override scope at all here, so it's the full default scope
+      expect(mockAuth).toHaveBeenCalledWith(
+        {
+          ...expectedAuthOptions(),
+          scope: 'AdobeID,openid,read_organizations,additional_info.job_function,additional_info.projectedProductContext,additional_info.roles'
+        }
+      );
+      expect(accessToken).toBe('getIntegrationAccessTokenAPICall -- value');
     });
 
     it('uses data from arguments', async () => {
@@ -144,7 +122,7 @@ describe('getIntegrationAccessToken', () => {
       );
 
       expect(mockAuth).toHaveBeenCalledWith(expectedAuthOptions());
-      expect(accessToken).toBe('generatedAccessToken');
+      expect(accessToken).toBe('getIntegrationAccessTokenAPICall -- value');
     });
 
     it('uses environment variables if respective arguments do not exist', async () => {
@@ -153,42 +131,45 @@ describe('getIntegrationAccessToken', () => {
           privateKeyEnvVar: 'TEST_PRIVATE_KEY',
           clientSecretEnvVar: 'TEST_CLIENT_SECRET',
         }),
-        {
-          orgId: 'MyOrgId',
-          techAccountId: 'MyTechAccountId',
-          apiKey: 'MyApiKey',
-        }
+        getArguments()
       );
 
       expect(mockAuth).toHaveBeenCalledWith(expectedAuthOptions());
-      expect(accessToken).toBe('generatedAccessToken');
+      expect(accessToken).toBe('getIntegrationAccessTokenAPICall -- value');
     });
 
     it('logs additional detail in verbose mode', async () => {
+      const callArgs = getArguments({ verbose: true });
       const accessToken = await getIntegrationAccessToken(
         getEnvConfig(),
-        getArguments({ verbose: true })
+        callArgs
       );
 
-      expect(mockLogVerboseHeader).toHaveBeenCalledWith(
-        'Authenticating with metascope ent_reactor_sdk'
+      // call fresh for getArguments() because the key of "verbose" is not expected to be in there.
+      // Additionally, we aren't logging out the keyword "auth", just the keys inside of that.
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringContaining(
+          'authConfig was ' + JSON.stringify(getArguments().auth)
+        )
+      );
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringContaining('user has overridden default scope')
+      );
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Authenticating with scope: read_organizations,test_fake_scope')
       );
       expect(mockAuth).toHaveBeenCalledWith(expectedAuthOptions());
-      expect(accessToken).toBe('generatedAccessToken');
+      expect(accessToken).toBe('getIntegrationAccessTokenAPICall -- value');
     });
 
     it('reports error retrieving access token', async () => {
       const mockedAuthError = mockServerErrorResponse('some error: Bad things happened', 'server_error_code');
-      mockAuth.and.returnValue(
-        Promise.reject(mockedAuthError)
-      );
+      mockAuth.mockImplementationOnce(() => Promise.reject(mockedAuthError));
 
       let returnedError;
       try {
         await getIntegrationAccessToken(
-          {
-            scope: 'https://scope.com/s/',
-          },
+          {},
           getArguments()
         );
       } catch (error) {
@@ -196,62 +177,17 @@ describe('getIntegrationAccessToken', () => {
       }
 
       // we bailed after the first call because it wasn't a scoping error
-      expect(mockAuth.calls.count()).toBe(1)
+      expect(mockAuth).toHaveBeenCalledTimes(1)
 
-      expect(returnedError.message.includes('Error retrieving your Access Token:')).toBeTrue();
-      expect(returnedError.message.includes('Error Message: some error: Bad things happened')).toBeTrue();
-      expect(returnedError.message.includes('Error Code: server_error_code')).toBeTrue();
+      expect(returnedError.message.includes('Error retrieving your Access Token:')).toBe(true);
+      expect(returnedError.message.includes('Error Message: some error: Bad things happened')).toBe(true);
+      expect(returnedError.message.includes('Error Code: server_error_code')).toBe(true);
       expect(returnedError.code).toBe('server_error_code');
-    });
-
-    it('attempts authenticating with each supported metascope', async () => {
-      const mockedAuthError = mockServerErrorResponse('invalid_scope: Invalid metascope.', 'invalid_scope');
-      mockAuth.and.returnValue(
-        Promise.reject(mockedAuthError)
-      );
-
-      let returnedError;
-      try {
-        await getIntegrationAccessToken(getEnvConfig(), getArguments());
-      } catch (error) {
-        returnedError = error;
-      }
-
-      expect(mockAuth).toHaveBeenCalledWith(
-        expectedAuthOptions({
-          metaScopes: [
-            'https://scope.com/s/ent_reactor_sdk',
-          ],
-        })
-      );
-
-      expect(mockAuth).toHaveBeenCalledWith(
-        expectedAuthOptions({
-          metaScopes: [
-            'https://scope.com/s/ent_reactor_extension_developer_sdk',
-          ],
-        })
-      );
-
-      expect(mockAuth).toHaveBeenCalledWith(
-        expectedAuthOptions({
-          metaScopes: ['https://scope.com/s/ent_reactor_admin_sdk'],
-        })
-      );
-
-      expect(mockAuth.calls.count()).toBe(METASCOPES.length);
-      // This tests that if all metascopes fail, the error from the last attempt is ultimately thrown.
-      expect(returnedError.message.includes('Error retrieving your Access Token:')).toBeTrue();
-      expect(returnedError.message.includes('Error Message: invalid_scope: Invalid metascope.')).toBeTrue();
-      expect(returnedError.message.includes('Error Code: invalid_scope')).toBeTrue();
-      expect(returnedError.code).toBe('invalid_scope');
     });
 
     it('throws a stack trace when error.code is missing', async () => {
       const mockedAuthError = mockUnhandledException('500 server error');
-      mockAuth.and.returnValue(
-        Promise.reject(mockedAuthError)
-      );
+      mockAuth.mockImplementationOnce(() => Promise.reject(mockedAuthError));
 
       let returnedError;
       try {
@@ -262,7 +198,7 @@ describe('getIntegrationAccessToken', () => {
       }
 
       // however, when we don't see an error.code, we bail and report
-      expect(mockAuth.calls.count()).toBe(1);
+      expect(mockAuth).toHaveBeenCalledTimes(1);
       // the message should not have any of our pretty formatting
       expect(returnedError.message).toBe('500 server error');
       expect(returnedError.code).toBeFalsy();
@@ -270,9 +206,7 @@ describe('getIntegrationAccessToken', () => {
 
     it('throws a stack trace when --verbose and request_failed', async () => {
       const mockedAuthError = mockServerErrorResponse('some error', 'request_failed');
-      mockAuth.and.returnValue(
-        Promise.reject(mockedAuthError)
-      );
+      mockAuth.mockImplementationOnce(() => Promise.reject(mockedAuthError));
 
       let returnedError;
       try {
@@ -283,17 +217,15 @@ describe('getIntegrationAccessToken', () => {
       }
 
       // however, when we don't see an error.code, we bail and report
-      expect(mockAuth.calls.count()).toBe(1);
+      expect(mockAuth).toHaveBeenCalledTimes(1);
       // the message should not have any of our pretty formatting
       expect(returnedError.message).toBe('some error');
       expect(returnedError.code).toBe('request_failed');
     });
-
+    //
     it('shows JS error details in case they happen', async () => {
       const mockedAuthError = mockServerErrorResponse('some error', 'server_error_code');
-      mockAuth.and.returnValue(
-        Promise.reject(mockedAuthError)
-      );
+      mockAuth.mockImplementationOnce(() => Promise.reject(mockedAuthError));
 
       let returnedError;
       try {
@@ -303,43 +235,46 @@ describe('getIntegrationAccessToken', () => {
       }
 
       // we bailed after the first call because it wasn't a scoping error
-      expect(mockAuth.calls.count()).toBe(1)
+      expect(mockAuth).toHaveBeenCalledTimes(1)
 
-      expect(returnedError.message.includes('Error retrieving your Access Token:')).toBeTrue();
-      expect(returnedError.message.includes('Error Message: some error')).toBeTrue();
-      expect(returnedError.message.includes('Error Code: server_error_code')).toBeTrue();
+      expect(returnedError.message.includes('Error retrieving your Access Token:')).toBe(true);
+      expect(returnedError.message.includes('Error Message: some error')).toBe(true);
+      expect(returnedError.message.includes('Error Code: server_error_code')).toBe(true);
       expect(returnedError.code).toBe('server_error_code');
     });
 
     it('contains a fallback message for authentication errors', async () => {
       // don't supply a message during auth failure
       const mockedAuthError = mockServerErrorResponse(undefined, 'server_error_code');
-      mockAuth.and.returnValue(
-        Promise.reject(mockedAuthError)
-      );
+      mockAuth.mockImplementationOnce(() => Promise.reject(mockedAuthError));
 
       let returnedError;
       try {
         await getIntegrationAccessToken(
-          {
-            scope: 'https://scope.com/s/'
-          },
-          {
-            privateKey: 'MyPrivateKey',
-            orgId: 'MyOrgId',
-            techAccountId: 'MyTechAccountId',
-            apiKey: 'MyApiKey',
-            clientSecret: 'MyClientSecret'
-          }
+          {},
+          getArguments()
         );
       } catch (error) {
         returnedError = error;
       }
 
-      expect(returnedError.message.includes('Error retrieving your Access Token:')).toBeTrue();
-      expect(returnedError.message.includes('Error Message: An unknown authentication error occurred')).toBeTrue();
-      expect(returnedError.message.includes('Error Code: server_error_code')).toBeTrue();
+      expect(returnedError.message.includes('Error retrieving your Access Token:')).toBe(true);
+      expect(returnedError.message.includes('Error Message: An unknown authentication error occurred')).toBe(true);
+      expect(returnedError.message.includes('Error Code: server_error_code')).toBe(true);
       expect(returnedError.code).toBe('server_error_code');
+    });
+
+    it('can use a bypass auth.access-token', async () => {
+      const callArgs = getArguments();
+      callArgs.auth.accessToken = 'override-access-token';
+      // console.log('callArgs', callArgs);
+      const accessToken = await getIntegrationAccessToken(
+        getEnvConfig(),
+        callArgs
+      );
+
+      expect(mockAuth).toHaveBeenCalledTimes(0);
+      expect(accessToken).toBe('override-access-token');
     });
   });
 });

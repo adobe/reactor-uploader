@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  ****************************************************************************************/
 
-const proxyquire = require('proxyquire');
 let checkOldProductionEnvironmentVariables;
 let errorMessage;
 
@@ -25,7 +24,7 @@ describe('checkOldProductionEnvironmentVariables', () => {
       errorMessage = e.message;
     }
     delete process.env.REACTOR_UPLOADER_PRIVATE_KEY_PRODUCTION;
-    expect(errorMessage).toStartWith('The environment variables ');
+    expect(errorMessage).toMatch(new RegExp('^The environment variables '))
   });
 
   it('throws an error when REACTOR_UPLOADER_CLIENT_SECRET_PRODUCTION environment variable is defined', () => {
@@ -38,7 +37,7 @@ describe('checkOldProductionEnvironmentVariables', () => {
       errorMessage = e.message;
     }
     delete process.env.REACTOR_UPLOADER_CLIENT_SECRET_PRODUCTION;
-    expect(errorMessage).toStartWith('The environment variables ');
+    expect(errorMessage).toMatch(new RegExp('^The environment variables '))
   });
 
   it('throws an error when REACTOR_UPLOADER_PRIVATE_KEY environment variable is defined', () => {
@@ -51,7 +50,7 @@ describe('checkOldProductionEnvironmentVariables', () => {
       errorMessage = e.message;
     }
     delete process.env.REACTOR_UPLOADER_PRIVATE_KEY;
-    expect(errorMessage).toStartWith('The environment variables ');
+    expect(errorMessage).toMatch(new RegExp('^The environment variables '))
   });
 
   it('throws an error when REACTOR_UPLOADER_CLIENT_SECRET environment variable is defined', () => {
@@ -64,6 +63,6 @@ describe('checkOldProductionEnvironmentVariables', () => {
       errorMessage = e.message;
     }
     delete process.env.REACTOR_UPLOADER_CLIENT_SECRET;
-    expect(errorMessage).toStartWith('The environment variables ');
+    expect(errorMessage).toMatch(new RegExp('^The environment variables '))
   });
 });

@@ -12,7 +12,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const inquirer = require('inquirer');
+const inquirer = require('inquirer').default;
 
 const ZIP_NAME_REGEX = /\.zip$/;
 
@@ -117,7 +117,6 @@ module.exports = async (argv) => {
   let zipPath;
 
   const zipArg = argv._[0];
-
   if (zipArg && validateZipPath(zipArg)) {
     zipPath = zipArg;
   } else {
