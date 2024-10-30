@@ -75,7 +75,6 @@ const checkOldProductionEnvironmentVariables = require('./checkOldProductionEnvi
 
 (async () => {
   try {
-    console.log('running uploader as local stuff')
     fetchWrapper.isFetchVerbose = argv.verbose;
     const environment = getEnvironment(argv);
     const envSpecificConfig = envConfig[environment];
