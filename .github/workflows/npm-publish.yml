@@ -8,7 +8,7 @@ on:
     inputs:
       tag:
         description: 'The tag to publish to: latest | next'
-        required: false
+        required: true
         default: 'latest'
   release:
     types: [created]
@@ -49,3 +49,5 @@ jobs:
     uses: adobe/reactor-uploader/.github/workflows/notify.yaml@master
     with:
       tag: ${{github.event.inputs.tag}}
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

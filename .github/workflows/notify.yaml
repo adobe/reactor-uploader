@@ -11,7 +11,7 @@ on:
 jobs:
   notify-on-success:
     runs-on: ubuntu-latest
-    if: ${{ inputs.tag == 'latest'}}
+    if: ${{ inputs.tag == 'latest' }}
     steps:
       - uses: actions/checkout@v4
       - name: Get latest tag
@@ -23,7 +23,7 @@ jobs:
       - name: Notify Slack of Release
         uses: tokorom/action-slack-incoming-webhook@main
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          INCOMING_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         with:
          text: "A new version of ${{ github.event.repository.full_name }}[${{ steps.repoTag.outputs.tag }}] has been released"
          attachments: |
