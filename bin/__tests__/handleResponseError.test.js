@@ -53,29 +53,53 @@ describe('handleResponseError', () => {
       `${os.EOL}${chalk.green('title: ')} Disk Error.${os.EOL}${chalk.green('detail: ')}Out of disk space.`);
   });
 
-  it('throws an error for unknown type of error response', () => {
+  it('throws an error for unknown type of error response (simple stringify check)', () => {
     let errorMessage;
-    const error = { something: 'unexpected' };
+    const oldError = { something: 'unexpected' };
+    let newError;
 
     try {
-      handleResponseError(error, 'Failed to do something.');
+      handleResponseError(oldError, 'Failed to do something.');
     } catch (error) {
+      newError = error;
       errorMessage = error.message;
     }
 
-    expect(errorMessage).toBe(`Failed to do something. ${JSON.stringify(error)}.`);
+    expect(errorMessage).toBe(`Failed to do something. ${JSON.stringify(oldError)}.`);
+    expect(oldError).not.toBe(newError);
   });
 
-  it('throws an error for unknown type of error response', () => {
+  it('throws an error for unknown type of error response (getOwnPropertyNames check)', () => {
     let errorMessage;
-    const error = new Error('unexpected');
+    const oldError = new Error(JSON.stringify({ something: 'unexpected' }));
+    let newError;
 
     try {
-      handleResponseError(error, 'Failed to do something.');
+      handleResponseError(oldError, 'Failed to do something.');
     } catch (error) {
+      newError = error;
       errorMessage = error.message;
     }
 
-    expect(errorMessage).toBe(`Failed to do something. ${JSON.stringify(error, Object.getOwnPropertyNames(error))}.`);
+    expect(errorMessage).toBe(`Failed to do something. ${JSON.stringify(oldError, Object.getOwnPropertyNames(oldError))}.`);
+    expect(oldError).not.toBe(newError);
+  });
+
+  it('passes through an error if it is fully prepared', () => {
+    let errorMessage;
+    const oldError = new Error('Custom prepared error.');
+    oldError.code = 404;
+    let newError;
+
+    try {
+      handleResponseError(oldError, 'Failed to do something.');
+    } catch (error) {
+      newError = error;
+      errorMessage = error.message;
+    }
+
+    expect(errorMessage).toBe('Custom prepared error.');
+    expect(newError.code).toBe(404);
+    expect(oldError).toBe(newError);
   });
 });

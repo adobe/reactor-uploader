@@ -13,7 +13,9 @@
 module.exports = () => {
   if (
     process.env['REACTOR_UPLOADER_PRIVATE_KEY_PRODUCTION'] ||
-    process.env['REACTOR_UPLOADER_CLIENT_SECRET_PRODUCTION']
+    process.env['REACTOR_UPLOADER_CLIENT_SECRET_PRODUCTION'] ||
+    process.env['REACTOR_UPLOADER_PRIVATE_KEY'] ||
+    process.env['REACTOR_UPLOADER_CLIENT_SECRET']
   ) {
     throw new Error(
       'The environment variables REACTOR_UPLOADER_PRIVATE_KEY_PRODUCTION and ' +
