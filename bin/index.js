@@ -71,15 +71,12 @@ const getExtensionPackageFromServer = require('./getExtensionPackageFromServer')
 const uploadZip = require('./uploadZip');
 const monitorStatus = require('./monitorStatus');
 const envConfig = require('./envConfig');
-const checkOldProductionEnvironmentVariables = require('./checkOldProductionEnvironmentVariables');
 
 (async () => {
   try {
     fetchWrapper.isFetchVerbose = argv.verbose;
     const environment = getEnvironment(argv);
     const envSpecificConfig = envConfig[environment];
-
-    checkOldProductionEnvironmentVariables();
 
     const integrationAccessToken = await getIntegrationAccessToken(envSpecificConfig, argv);
     if (argv.verbose) {
@@ -112,13 +109,13 @@ const checkOldProductionEnvironmentVariables = require('./checkOldProductionEnvi
       argv
     );
   } catch (error) {
-    if (true || argv.verbose || !error.code) {
-      console.log(chalk.bold.red('--verbose output:'))
+    if (argv.verbose || !error.code) {
+      console.log(chalk.bold.red('--verbose output'))
       throw error;
     }
 
     console.log(chalk.bold.red(error.message));
-    console.log(chalk.bold.red('run in --verbose mode for full stack trace'));
+    console.log(chalk.red('run in --verbose mode for full stack trace'));
     process.exitCode = 1;
   }
 })();

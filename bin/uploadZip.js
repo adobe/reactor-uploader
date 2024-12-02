@@ -57,7 +57,16 @@ module.exports = async(
     const response = await fetchWrapper.fetch(url, options);
     const body = await response.json();
     if (!body?.data?.id) {
-      throw new Error(`No extension package ID was returned from the API. Full response body: ${JSON.stringify(body)}`);
+      console.log(chalk.bold.red('ERROR'));
+      console.log(chalk.red(`Failed to ${shouldPost ? 'POST' : 'PATCH'} the extension package to the server.`));
+      console.log(chalk.red('No extension package ID was returned from the API.'))
+      const epPostPatchError = new Error(JSON.stringify(body));
+      if ("invalid-name" === body?.errors?.[0]?.code) {
+        // setting any kind of error code makes the error output less chatty when the user isn't already running in verbose mode.
+        epPostPatchError.code = 1;
+        console.log(chalk.bold.red('The "name" field within your extension.json is likely in use by another extension outside the organization you are attempting to upload to.'));
+      }
+      throw epPostPatchError;
     }
 
     const extensionPackageId = body.data.id;

@@ -142,6 +142,39 @@ describe('uploadZip', () => {
     expect(mockHandleResponseError).toHaveBeenCalledWith(error, expect.any(String));
   });
 
+  it('provides a useful message when there is a potential name conflict', async () => {
+    mockFetch.mockResolvedValueOnce({
+      json: jest.fn().mockResolvedValue({
+        errors: [{
+          id: 'abc-123',
+          code: 'invalid-name'
+        }]
+      })
+    });
+
+    try {
+      await uploadZip(
+        {
+          extensionPackages: 'https://extensionpackages.com',
+        },
+        'generatedAccessToken',
+        extensionPackageManifest,
+        {
+          id: 'EP123',
+          attributes: {
+            availability: 'development'
+          }
+        },
+        '/extension.zip',
+        {}
+      );
+    } catch (e) {}
+
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.stringContaining('The "name" field within your extension.json is likely in use by another extension outside the organization you are attempting to upload to.')
+    );
+  });
+
   it('logs additional detail in verbose mode', async () => {
     await uploadZip(
       {
@@ -190,7 +223,9 @@ describe('uploadZip', () => {
 
     expect(mockHandleResponseError).toHaveBeenCalledWith(expect.any(Error), expect.any(String));
     const [error] = mockHandleResponseError.mock.calls[0];
-    expect(error.message).toContain('No extension package ID was returned from the API');
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.stringContaining('No extension package ID was returned from the API')
+    );
     expect(error.message).toContain('invalid version');
     expect(error.message).toContain('The package you uploaded is older than the latest known version.');
 
